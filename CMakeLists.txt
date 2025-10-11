@@ -15,28 +15,24 @@
 
 # Static/dynamic runtime can be selected via -DSTATIC_MSVC_RUNTIME=ON|OFF
 macro(configure_msvc_runtime)
-    if (NOT BUILD_WWISE_AUTHORING_PLUGIN)
-        option(STATIC_MSVC_RUNTIME "Static linkage of MSVC runtime" ON)
-        SET(MSVC_RUNTIME_FLAG "/MT" CACHE STRING "MSVC Runtime flag")
+    if (MSVC AND NOT BUILD_WWISE_AUTHORING_PLUGIN)
+        option(STATIC_MSVC_RUNTIME "Use static MSVC runtime (/MT, /MTd)" ON)
         if (STATIC_MSVC_RUNTIME)
-            SET(MSVC_RUNTIME_FLAG "/MT")
-        else ()
-            SET(MSVC_RUNTIME_FLAG "/MD")
-        endif ()
-        message(STATUS "MSVC Runtime flag: ${MSVC_RUNTIME_FLAG}")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MSVC_RUNTIME_FLAG}" CACHE INTERNAL "" FORCE)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_RUNTIME_FLAG}d" CACHE INTERNAL "" FORCE)
-        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${MSVC_RUNTIME_FLAG}" CACHE INTERNAL "" FORCE)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${MSVC_RUNTIME_FLAG}d" CACHE INTERNAL "" FORCE)
-    endif (NOT BUILD_WWISE_AUTHORING_PLUGIN)
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
+        else()
+            set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
+        endif()
+    endif()
+    if (MSVC)
+        message(STATUS "MSVC runtime: ${CMAKE_MSVC_RUNTIME_LIBRARY}")
+    endif()
 endmacro()
 
-macro(use_cxx11)
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED on)
-endmacro(use_cxx11)
-
-project(ResonanceAudio)
+macro(use_cxx17)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endmacro(use_cxx17)
 
 # Build options
 option(BUILD_RESONANCE_AUDIO_API "Build Resonance Audio API." OFF)
@@ -46,11 +42,7 @@ option(BUILD_GEOMETRICAL_ACOUSTICS_TESTS "Build Resonance Audio's Geometrical Ac
 option(BUILD_WWISE_AUTHORING_PLUGIN "Build Resonance Audio WWise Authoring Plugin" OFF)
 option(BUILD_WWISE_SOUND_ENGINE_PLUGIN "Build Resonance Audio WWise Sound Engine Plugin." OFF)
 option(BUILD_FMOD_PLUGIN "Build FMOD Resonance Audio Plugin" OFF)
-option(BUILD_VST_MONITOR_PLUGIN "Build Resonance Audio VST Monitor Plugin" OFF)
-
-if (MSVC)
-    configure_msvc_runtime()
-endif ()
+option(BUILD_VST_MONITOR_PLUGIN "Build Resonance Audio VST Monitor Plugin" ON)
 
 if (IOS_PLATFORM STREQUAL "OS" OR IOS_PLATFORM MATCHES "SIMULATOR")
     message(STATUS "iOS toolchain detected")
@@ -60,14 +52,17 @@ elseif(ANDROID)
     add_definitions(-DPLATFORM_ANDROID)
 endif ()
 
-cmake_minimum_required(VERSION 3.4.1)
+use_cxx17()
+configure_msvc_runtime()
+cmake_minimum_required(VERSION 3.30)
+project(ResonanceAudio)
+
 set(CMAKE_COLOR_MAKEFILE ON)
 
 set(INSTALL_DIR "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path")
 
 set(RA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/resonance_audio/)
 
-use_cxx11()
 if (BUILD_RESONANCE_AUDIO_TESTS OR BUILD_GEOMETRICAL_ACOUSTICS_TESTS)
     enable_testing()
 
@@ -107,3 +102,33 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(resonance_audio)
 add_subdirectory(platforms)
+
+# ----------------------------------------------------------------------
+# Import Steinberg VST3 SDK
+# ----------------------------------------------------------------------
+if (BUILD_VST_MONITOR_PLUGIN)
+    set(VST3_SDK_PATH "${CMAKE_SOURCE_DIR}/third_party/VST_SDK" CACHE PATH "Path to VST3 SDK")
+
+    # Include VST3 SDK submodules (headers and sources)
+    set(VST3_SDK_INCLUDE_DIRS
+        ${VST3_SDK_PATH}
+        ${VST3_SDK_PATH}/base
+        ${VST3_SDK_PATH}/pluginterfaces
+        ${VST3_SDK_PATH}/public.sdk
+        ${VST3_SDK_PATH}/public.sdk/source/vst
+        ${VST3_SDK_PATH}/public.sdk/source/common
+        ${VST3_SDK_PATH}/public.sdk/source/vst/vstgui
+        ${VST3_SDK_PATH}/public.sdk/source/vst/vst2wrapper
+        ${VST3_SDK_PATH}/vstgui4
+        ${VST3_SDK_PATH}/vstgui4/vstgui
+        ${VST3_SDK_PATH}/vstgui4/vstgui/lib
+        ${VST3_SDK_PATH}/vstgui4/vstgui/uidescription
+    )
+
+    # Disable unwanted VST3 example builds
+    set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "Enable VST 3 Plug-in Examples")
+    set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES OFF CACHE BOOL "Enable VST 3 Hosting Examples")
+    set(SMTG_ENABLE_VSTGUI_SUPPORT ON CACHE BOOL "Enable VSTGUI Support")
+    add_subdirectory(${VST3_SDK_PATH})
+
+endif (BUILD_VST_MONITOR_PLUGIN)

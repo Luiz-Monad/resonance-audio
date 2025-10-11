@@ -14,22 +14,50 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_GUI_H_
-#define RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_GUI_H_
+#ifndef RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_GUI_H_
+#define RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_GUI_H_
 
-#include "plugin-bindings/aeffguieditor.h"
+#include "pluginterfaces/gui/iplugview.h"
+#include "public.sdk/source/vst/vsteditcontroller.h"
+#include "vstgui4/vstgui/lib/cframe.h"
+#include "vstgui4/vstgui/lib/cbitmap.h"
+#include "vstgui4/vstgui/lib/iviewlistener.h"
+#include "vstgui4/vstgui/lib/vstguibase.h"
 
-// Implements the VST GUI interface for |BinauralRendererVst|.
-class BinauralRendererGui : public AEffGUIEditor {
+namespace Steinberg {
+namespace Vst {
+
+/**
+ * @brief The VST3 GUI for the Resonance Audio Binaural Renderer.
+ *
+ * This implements a simple editor view that displays a static image
+ * (like the old VST2 version did with "resonance_audio.png").
+ */
+class BinauralRendererView : public VSTGUI::CView, public EditorView {
  public:
-  BinauralRendererGui(void* ptr);
-  ~BinauralRendererGui() override {}
+  explicit BinauralRendererView(EditController* controller);
+  ~BinauralRendererView() SMTG_OVERRIDE;
 
-  static AEffEditor* createEditor(AudioEffectX* effect);
+  // IPlugView overrides
+  tresult PLUGIN_API isPlatformTypeSupported(FIDString type) SMTG_OVERRIDE;
+  tresult PLUGIN_API attached(void* parent, FIDString type) SMTG_OVERRIDE;
+  tresult PLUGIN_API removed() SMTG_OVERRIDE;
+  tresult PLUGIN_API onSize(ViewRect* newSize) SMTG_OVERRIDE;
 
-  // Implements AEffGUIEditor interface.
-  bool open(void* ptr) override;
-  void close() override;
+  // Optional � handle GUI resize or parameter updates
+  tresult PLUGIN_API onWheel(float distance) SMTG_OVERRIDE { return kResultOk; }
+
+protected:
+  // Internal frame (VSTGUI root container)
+  VSTGUI::CFrame* frame_ = nullptr;
+
+  // Background image
+  VSTGUI::SharedPointer<VSTGUI::CBitmap> background_;
+
+  // Pointer to the edit controller
+  EditController* controller_ = nullptr;
 };
 
-#endif  // RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_GUI_H_
+}}  // namespace Steinberg::Vst
+
+#endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_GUI_H_

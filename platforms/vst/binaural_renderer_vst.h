@@ -14,49 +14,70 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifndef RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_VST_H_
-#define RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_VST_H_
+#ifndef RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_VST_H_
+#define RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_VST_H_
 
 #include <memory>
-
 #include "api/binaural_surround_renderer.h"
-#include "public.sdk/source/vst2.x/audioeffectx.h"
-#include "binaural_renderer_gui.h"
 
-class BinauralRendererVst : public AudioEffectX {
+// VST3 SDK
+#include "public.sdk/source/vst/vstaudioeffect.h"
+#include "pluginterfaces/vst/vsttypes.h"
+#include "pluginterfaces/base/funknown.h"
+#include "pluginterfaces/base/ustring.h"
+
+namespace vraudio {
+  class BinauralSurroundRenderer;
+}
+
+namespace Steinberg {
+namespace Vst {
+
+//-----------------------------------------------------------------------------
+// BinauralRendererVst
+//-----------------------------------------------------------------------------
+// This class implements the VST3 processor (audio engine) side of the plugin.
+//-----------------------------------------------------------------------------
+class BinauralRendererVst : public AudioEffect {
  public:
-  explicit BinauralRendererVst(audioMasterCallback audioMaster);
-  ~BinauralRendererVst() override;
+  BinauralRendererVst();
+  ~BinauralRendererVst() SMTG_OVERRIDE;
 
-  // Processing.
-  void processReplacing(float** inputs, float** outputs,
-                        VstInt32 sampleFrames) override;
+  // Factory function (used by class factory registration).
+  static FUnknown* createInstance(void*) { return (IAudioProcessor*)new BinauralRendererVst(); }
 
-  // Program.
-  void setProgramName(char* name) override;
-  void getProgramName(char* name) override;
+  //--- AudioEffect overrides ---
+  tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
+  tresult PLUGIN_API terminate() SMTG_OVERRIDE;
 
-  bool getEffectName(char* name) override;
-  bool getVendorString(char* text) override;
-  bool getProductString(char* text) override;
-  VstInt32 getVendorVersion() override;
+  tresult PLUGIN_API setBusArrangements(SpeakerArrangement* inputs,
+                                        int32 numIns,
+                                        SpeakerArrangement* outputs,
+                                        int32 numOuts) SMTG_OVERRIDE;
 
-  VstPlugCategory getPlugCategory() override { return kPlugCategEffect; }
+  tresult PLUGIN_API setActive(TBool state) SMTG_OVERRIDE;
+  tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
+
+  tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
 
  protected:
+
+  // Processing.
+  void processReplacing(int32 numInputs, float** inputs,
+                        int32 numOutputs, float** outputs,
+                        int32 sampleFrames, int32 sampleRate);
+ 
   // Creates |BinauralSurroundRenderer| instances.
-  bool initBinauralSurroundRenderer(VstInt32 framesPerBuffer,
-                                    VstInt32 numInputChannels,
+  bool initBinauralSurroundRenderer(int32 framesPerBuffer,
+                                    int32 numInputChannels,
                                     int sampleRateHz);
 
-  // VST program name.
-  char programName[kVstMaxProgNameLen + 1];
+  // Buffer size |binauralSurroundRenderer_| has been initialized with.
+  int32 framesPerBuffer_;
 
   // Buffer size |binauralSurroundRenderer_| has been initialized with.
-  VstInt32 framesPerBuffer_;
-
-  // Buffer size |binauralSurroundRenderer_| has been initialized with.
-  VstInt32 numInputChannels_;
+  int32 numInputChannels_;
 
   // Sample rate |binauralSurroundRenderer_| has been initialized with.
   int sampleRateHz_;
@@ -65,4 +86,6 @@ class BinauralRendererVst : public AudioEffectX {
   std::unique_ptr<vraudio::BinauralSurroundRenderer> binauralSurroundRenderer_;
 };
 
-#endif  // RESONANCE_AUDIO_PLATFORM_VST_BINAURAL_RENDERER_VST_H_
+}} // namespace Steinberg::Vst
+
+#endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_VST_H_

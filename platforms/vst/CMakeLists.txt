@@ -1,18 +1,23 @@
 # Copyright 2018 Google Inc. All Rights Reserved.
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
+# You may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-#
 #     http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS-IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
 # limitations under the License.
 #
 
+# ----------------------------------------------------------------------
+# Project setup
+# ----------------------------------------------------------------------
+cmake_minimum_required(VERSION 3.30)
+project(ResonanceAudioMonitorVst)
+
+# ----------------------------------------------------------------------
+# Helper: Create Windows resource file
+# ----------------------------------------------------------------------
 function(create_windows_resource_file RESOURCES)
     set(RESOURCES_LIST)
     foreach (RESOURCE_DIR ${RESOURCES})
@@ -21,107 +26,100 @@ function(create_windows_resource_file RESOURCES)
         string(REPLACE "." "" RESOURCE_EXT_WITHOUT_DOT ${RESOURCE_EXT})
         string(TOUPPER ${RESOURCE_EXT_WITHOUT_DOT} UPPER_RESOURCE_EXT_WITHOUT_DOT)
         list(APPEND RESOURCES_LIST "${RESOURCE_FILENAME}\t${UPPER_RESOURCE_EXT_WITHOUT_DOT}\t\"${RESOURCE_DIR}\"\n")
-    endforeach (RESOURCE_DIR ${RESOURCES})
+    endforeach ()
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/resource.rc ${RESOURCES_LIST})
-endfunction(create_windows_resource_file)
+endfunction()
 
-include_directories(${PROJECT_SOURCE_DIR}/resonance_audio)
+# ----------------------------------------------------------------------
+# Include directories
+# ----------------------------------------------------------------------
+include_directories(${CMAKE_SOURCE_DIR}/resonance_audio)
+include_directories(${VST3_SDK_INCLUDE_DIRS})
 
-# Binaural Renderer VST wrapper.
+# ----------------------------------------------------------------------
+# Source files
+# ----------------------------------------------------------------------
 set(RESONANCE_AUDIO_MONITOR_VST
-        ${PROJECT_SOURCE_DIR}/platforms/vst/binaural_renderer_gui.cc
-        ${PROJECT_SOURCE_DIR}/platforms/vst/binaural_renderer_gui.h
-        ${PROJECT_SOURCE_DIR}/platforms/vst/binaural_renderer_vst.cc
-        ${PROJECT_SOURCE_DIR}/platforms/vst/binaural_renderer_vst.h
-        )
+    ${PROJECT_SOURCE_DIR}/binaural_renderer_factory.cc
+    ${PROJECT_SOURCE_DIR}/binaural_renderer_gui.cc
+    ${PROJECT_SOURCE_DIR}/binaural_renderer_gui.h
+    ${PROJECT_SOURCE_DIR}/binaural_renderer_vst.cc
+    ${PROJECT_SOURCE_DIR}/binaural_renderer_vst.h
+)
+
 set(RESONANCE_AUDIO_MONITOR_RESOURCES
-        ${PROJECT_SOURCE_DIR}/platforms/vst/resources/resonance_audio.png
-        )
-add_library(ResonanceAudioMonitorVst MODULE ${RESONANCE_AUDIO_MONITOR_VST} $<TARGET_OBJECTS:ResonanceAudioObj>
-        $<TARGET_OBJECTS:SadieHrtfsObj>
-        $<TARGET_OBJECTS:PffftObj>)
-target_include_directories(ResonanceAudioMonitorVst PUBLIC ${PROJECT_SOURCE_DIR}/platforms/vst/)
+    ${PROJECT_SOURCE_DIR}/resources/resonance_audio.png
+)
 
-#Add VST SDK
-set(VSTSDK_DIR "${PROJECT_SOURCE_DIR}/third_party/VST_SDK/VST2_SDK" CACHE PATH "Path to VST SDK")
-set(VSTSDK_INCLUDE_DIR ${VSTSDK_DIR})
-set(VSTSDK_PLUGIN_SOURCE
-        ${VSTSDK_DIR}/public.sdk/source/vst2.x/audioeffectx.cpp
-        ${VSTSDK_DIR}/public.sdk/source/vst2.x/audioeffect.cpp
-        ${VSTSDK_DIR}/public.sdk/source/vst2.x/vstplugmain.cpp
-        ${VSTSDK_DIR}/pluginterfaces/vst2.x/aeffectx.h
-        ${VSTSDK_DIR}/pluginterfaces/vst2.x/aeffect.h
-        )
-target_sources(ResonanceAudioMonitorVst PUBLIC ${VSTSDK_PLUGIN_SOURCE})
-target_include_directories(ResonanceAudioMonitorVst PUBLIC ${VSTSDK_INCLUDE_DIR})
+# ----------------------------------------------------------------------
+# Plugin target
+# ----------------------------------------------------------------------
+add_library(ResonanceAudioMonitorVst MODULE
+    ${RESONANCE_AUDIO_MONITOR_VST}
+    $<TARGET_OBJECTS:ResonanceAudioObj>
+    $<TARGET_OBJECTS:SadieHrtfsObj>
+    $<TARGET_OBJECTS:PffftObj>
+)
 
-#Add VSTGUI SDK
-set(VSTSDKGUI_DIR "${PROJECT_SOURCE_DIR}/third_party/VST_SDK/VST3_SDK/vstgui4/vstgui/" CACHE PATH "Path to VSTGUI SDK")
-set(VSTGUI_DISABLE_UNITTESTS true)
-set(VSTSDKGUI_PLUGIN_SOURCE
-        ${VSTSDKGUI_DIR}/plugin-bindings/aeffguieditor.cpp
-        ${VSTSDKGUI_DIR}/plugin-bindings/aeffguieditor.h
-        )
-set(VSTSDKGUI_INCLUDE_DIR ${VSTSDKGUI_DIR})
+target_include_directories(ResonanceAudioMonitorVst PUBLIC
+    ${PROJECT_SOURCE_DIR}
+)
 
+# ----------------------------------------------------------------------
+# Link against official VST3 SDK targets
+# ----------------------------------------------------------------------
+target_link_libraries(ResonanceAudioMonitorVst PRIVATE sdk vstgui_support)
+
+# ----------------------------------------------------------------------
+# Platform-specific settings
+# ----------------------------------------------------------------------
 if (WIN32)
-    list(APPEND VSTSDKGUI_PLUGIN_SOURCE ${VSTSDKGUI_DIR}/vstgui_win32.cpp)
     create_windows_resource_file("${RESONANCE_AUDIO_MONITOR_RESOURCES}")
-    target_sources(ResonanceAudioMonitorVst PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/resource.rc)
-elseif (APPLE)
-    list(APPEND VSTSDKGUI_PLUGIN_SOURCE ${VSTSDKGUI_DIR}/vstgui_mac.mm)
-    # ignore deprecation warnings generated by VST GUI
-    set_source_files_properties(
-            ${VSTGUI_SOURCE} PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations"
+    target_sources(ResonanceAudioMonitorVst PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/resource.rc
+    )
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE=1)
+
+    install(TARGETS ResonanceAudioMonitorVst
+        DESTINATION "C:/Program Files/Common Files/VST3/"
     )
 
-    if (XCODE)
-        target_link_libraries(ResonanceAudioMonitorVst PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework Accelerate" "-framework QuartzCore" "-framework Carbon")
-    else ()
-        find_library(COREFOUNDATION_FRAMEWORK CoreFoundation)
-        find_library(COCOA_FRAMEWORK Cocoa)
-        find_library(OPENGL_FRAMEWORK OpenGL)
-        find_library(ACCELERATE_FRAMEWORK Accelerate)
-        find_library(QUARTZCORE_FRAMEWORK QuartzCore)
-        find_library(CARBON_FRAMEWORK Carbon)
-        target_link_libraries(ResonanceAudioMonitorVst ${COREFOUNDATION_FRAMEWORK} ${COCOA_FRAMEWORK} ${OPENGL_FRAMEWORK} ${ACCELERATE_FRAMEWORK} ${QUARTZCORE_FRAMEWORK} ${CARBON_FRAMEWORK})
-    endif ()
+elseif(APPLE)
     set_source_files_properties(${RESONANCE_AUDIO_MONITOR_RESOURCES} PROPERTIES
-            MACOSX_PACKAGE_LOCATION Resources
-            )
-endif (WIN32)
+        MACOSX_PACKAGE_LOCATION Resources
+    )
 
-target_sources(ResonanceAudioMonitorVst PUBLIC ${VSTSDKGUI_PLUGIN_SOURCE} ${RESONANCE_AUDIO_MONITOR_RESOURCES})
-target_include_directories(ResonanceAudioMonitorVst PUBLIC ${VSTSDKGUI_INCLUDE_DIR})
-target_include_directories(ResonanceAudioMonitorVst PUBLIC vraudio/include)
-
-set(RESOURCE_FOLDER "${PROJECT_SOURCE_DIR}/platforms/vst/resources/")
-if (WIN32)
-    target_sources(ResonanceAudioMonitorVst PUBLIC ${RESOURCE_FOLDER}/exports.def)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE=1)
-    install(TARGETS ResonanceAudioMonitorVst
-            DESTINATION "/Program Files(x86)/Common Files/VST3/")
-
-elseif (APPLE)
+    set(RESOURCE_FOLDER "${PROJECT_SOURCE_DIR}/resources/")
     set(PKG_INFO ${RESOURCE_FOLDER}/PkgInfo)
-    set_source_files_properties("${PKG_INFO}" PROPERTIES
-            MACOSX_PACKAGE_LOCATION .
-            )
-    target_sources(ResonanceAudioMonitorVst PUBLIC ${PKG_INFO})
+    set_source_files_properties("${PKG_INFO}" PROPERTIES MACOSX_PACKAGE_LOCATION .)
+
+    target_sources(ResonanceAudioMonitorVst PRIVATE ${PKG_INFO})
+
     set_target_properties(ResonanceAudioMonitorVst PROPERTIES
-            BUNDLE true
-            BUNDLE_EXTENSION "vst"
-            XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
-            MACOSX_BUNDLE_INFO_PLIST "${RESOURCE_FOLDER}/Info.plist.in"
-            MACOSX_BUNDLE_BUNDLE_NAME "ResonanceAudioMonitorVst"
-            MACOSX_BUNDLE_GUI_IDENTIFIER "com.google.vr.resonance_audio_monitor"
-            MACOSX_BUNDLE_ICON_FILE ""
-            MACOSX_BUNDLE_SHORT_VERSION_STRING "0.0.1"
-            MACOSX_BUNDLE_COPYRIGHT "Google 2017"
-            )
-    set_property(TARGET ResonanceAudioMonitorVst PROPERTY CXX_STANDARD 11)
+        BUNDLE true
+        BUNDLE_EXTENSION "vst"
+        XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst"
+        MACOSX_BUNDLE_INFO_PLIST "${RESOURCE_FOLDER}/Info.plist.in"
+        MACOSX_BUNDLE_BUNDLE_NAME "ResonanceAudioMonitorVst"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.google.vr.resonance_audio_monitor"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.0.1"
+        MACOSX_BUNDLE_COPYRIGHT "Google 2017"
+    )
+
+    target_link_libraries(ResonanceAudioMonitorVst PRIVATE
+        "-framework Cocoa"
+        "-framework OpenGL"
+        "-framework Accelerate"
+        "-framework QuartzCore"
+        "-framework Carbon"
+    )
 
     install(TARGETS ResonanceAudioMonitorVst
-            DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-            )
-endif (WIN32)
+        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
+    )
+endif()
+
+# ----------------------------------------------------------------------
+# Misc
+# ----------------------------------------------------------------------
+target_sources(ResonanceAudioMonitorVst PRIVATE ${RESONANCE_AUDIO_MONITOR_RESOURCES})

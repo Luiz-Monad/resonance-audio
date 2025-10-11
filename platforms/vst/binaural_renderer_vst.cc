@@ -10,83 +10,189 @@ You may obtain a copy of the License at
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS-IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 */
 
+#include "public.sdk/source/vst/vstaudioeffect.h"
 #include "binaural_renderer_vst.h"
 
 #include <cstdlib>
-
 #include <unordered_map>
+#include <vector>
+#include <algorithm>
 
 #include "base/constants_and_types.h"
 
-namespace {
-
-// Plugin configuration.
-const char* kVendorName = "Google";
-const char* kEffectName = "ResonanceAudioMonitor";
-const VstInt32 kVendorVersion = 1;
-const int kNumPluginParameters = 0;
-const int kNumPluginPrograms = 1;
-
-}  // namespace
-
+using namespace Steinberg;
+using namespace Steinberg::Vst;
 using namespace vraudio;
 
-AudioEffect* createEffectInstance(audioMasterCallback audioMaster) {
-  return new BinauralRendererVst(audioMaster);
+// -----------------------------------------------------------------------------
+// Constructor / Destructor
+// -----------------------------------------------------------------------------
+BinauralRendererVst::BinauralRendererVst() {
+  // nothing heavy here; buses are added in initialize()
+  setControllerClass(FUID());  // controller created separately if you add one.
 }
 
-BinauralRendererVst::BinauralRendererVst(audioMasterCallback audioMaster)
-    : AudioEffectX(audioMaster, kNumPluginPrograms, kNumPluginParameters),
-      framesPerBuffer_(0),
-      numInputChannels_(0),
-      sampleRateHz_(0),
-      binauralSurroundRenderer_(nullptr) {
-  setNumInputs(
-      kNumThirdOrderAmbisonicChannels);  // Maximum number of input channels.
-  setNumOutputs(kNumStereoChannels);     // Stereo output.
-  setUniqueID('GVBR');                   // Identifier.
-  canProcessReplacing();                 // Supports replacing output.
-  vst_strncpy(programName, "Default",
-              kVstMaxProgNameLen);  // default program name
-  setEditor(BinauralRendererGui::createEditor(this));
+BinauralRendererVst::~BinauralRendererVst() {
+  binauralSurroundRenderer_.reset();
 }
 
-BinauralRendererVst::~BinauralRendererVst() {}
+// -----------------------------------------------------------------------------
+// initialize / terminate
+// -----------------------------------------------------------------------------
+tresult PLUGIN_API BinauralRendererVst::initialize(FUnknown* context) {
+  tresult result = AudioEffect::initialize(context);
+  if (result != kResultOk) {
+    return result;
+  }
 
-void BinauralRendererVst::setProgramName(char* name) {
-  vst_strncpy(programName, name, kVstMaxProgNameLen);
+  // Add a single input bus that accepts a discrete arrangement (arbitrary channel count)
+  // and a single stereo output bus.
+  // Host may reconfigure the input bus arrangement later via setBusArrangements.
+  addAudioInput(STR16("Input"), SpeakerArr::kAmbi3rdOrderACN);
+  addAudioOutput(STR16("Output"), SpeakerArr::kStereo);
+
+  return kResultOk;
 }
 
-void BinauralRendererVst::getProgramName(char* name) {
-  vst_strncpy(name, programName, kVstMaxProgNameLen);
+tresult PLUGIN_API BinauralRendererVst::terminate() {
+  binauralSurroundRenderer_.reset();
+  return AudioEffect::terminate();
 }
 
-bool BinauralRendererVst::getEffectName(char* name) {
-  vst_strncpy(name, kEffectName, kVstMaxEffectNameLen);
-  return true;
+// -----------------------------------------------------------------------------
+// setBusArrangements
+// The host will call this to configure channel counts for input/output.
+// -----------------------------------------------------------------------------
+tresult PLUGIN_API BinauralRendererVst::setBusArrangements(SpeakerArrangement* inputs,
+                                                           int32 numIns,
+                                                           SpeakerArrangement* outputs,
+                                                           int32 numOuts) {
+  // We expect at least one input and one output bus.
+  if (numIns <= 0 || numOuts <= 0) {
+    return kResultFalse;
+  }
+
+  // Accept any input arrangement (discrete/ambisonic). The ambisonic support check
+  // is performed later in initBinauralSurroundRenderer based on channel count.
+  // Keep the bus arrangement by delegating to base implementation.
+  return AudioEffect::setBusArrangements(inputs, numIns, outputs, numOuts);
 }
 
-bool BinauralRendererVst::getProductString(char* text) {
-  vst_strncpy(text, kEffectName, kVstMaxProductStrLen);
-  return true;
+// -----------------------------------------------------------------------------
+// setActive
+// Called when the component is activated/deactivated by host.
+// -----------------------------------------------------------------------------
+tresult PLUGIN_API BinauralRendererVst::setActive(TBool state) {
+  if (!state) {
+    // deactivated: free renderer.
+    binauralSurroundRenderer_.reset();
+    framesPerBuffer_ = 0;
+    numInputChannels_ = 0;
+    sampleRateHz_ = 0;
+  }
+  return AudioEffect::setActive(state);
+}
+// -----------------------------------------------------------------------------
+// process
+// Build planar float** arrays from VST3 buffers and call the original
+// processReplacing(...) routine.
+// -----------------------------------------------------------------------------
+tresult PLUGIN_API BinauralRendererVst::process(ProcessData& data) {
+    // Nothing to do if there are no audio buses or no samples.
+    if (data.numInputs == 0 || data.numOutputs == 0 || data.numSamples <= 0) {
+        return kResultOk;
+    }
+
+    // Only handle first input and first output bus in this implementation.
+    AudioBusBuffers& inBus = data.inputs[0];
+    AudioBusBuffers& outBus = data.outputs[0];
+
+    const int32 sampleRate = processSetup.sampleRate;
+    const int32 sampleFrames = data.numSamples;
+    const int32 numInputChannels = inBus.numChannels;
+    const int32 numOutputChannels = outBus.numChannels;
+
+    if (numInputChannels == 0 || numOutputChannels == 0) {
+        return kResultOk;
+    }
+
+    // Prepare temporary zero buffers in case the host leaves a channel pointer null.
+    // Use vectors sized to sampleFrames so pointer stability is guaranteed.
+    static std::vector<float> s_zero_in;
+    static std::vector<float> s_zero_out;
+    if (static_cast<int>(s_zero_in.size()) < sampleFrames) s_zero_in.assign(sampleFrames, 0.0f);
+    if (static_cast<int>(s_zero_out.size()) < sampleFrames) s_zero_out.assign(sampleFrames, 0.0f);
+
+    // Build input pointers array (planar)
+    std::vector<float*> inPtrs;
+    inPtrs.resize(static_cast<size_t>(numInputChannels));
+    for (int32 ch = 0; ch < numInputChannels; ++ch) {
+        float* ptr = nullptr;
+        if (inBus.channelBuffers32 && inBus.channelBuffers32[ch]) {
+            ptr = inBus.channelBuffers32[ch];
+        }
+        else {
+            ptr = s_zero_in.data();
+}
+        inPtrs[ch] = ptr;
+    }
+
+    // Build output pointers array (planar)
+    std::vector<float*> outPtrs;
+    outPtrs.resize(static_cast<size_t>(numOutputChannels));
+    for (int32 ch = 0; ch < numOutputChannels; ++ch) {
+        float* ptr = nullptr;
+        if (outBus.channelBuffers32 && outBus.channelBuffers32[ch]) {
+            ptr = outBus.channelBuffers32[ch];
+        }
+        else {
+            ptr = s_zero_out.data();
+        }
+        outPtrs[ch] = ptr;
+    }
+
+    // Call the original VST2-style routine that expects planar float** arrays.
+    processReplacing(numInputChannels, inPtrs.data(), 
+                     numOutputChannels, outPtrs.data(), 
+                     sampleFrames, sampleRate);
+
+    // If the host gave us more output channels than processReplacing used (it should
+    // zero remaining channels itself), ensure any extra channels are cleared to be safe.
+    // (processReplacing in your code clears remaining channels beyond stereo, but we
+    // keep this safety step just in case.)
+    if (numOutputChannels > static_cast<int32>(kNumStereoChannels)) {
+        for (int32 ch = static_cast<int32>(kNumStereoChannels); ch < numOutputChannels; ++ch) {
+            if (outBus.channelBuffers32 && outBus.channelBuffers32[ch]) {
+                std::fill_n(outBus.channelBuffers32[ch], sampleFrames, 0.0f);
+            }
+        }
+    }
+
+    return kResultOk;
 }
 
-bool BinauralRendererVst::getVendorString(char* text) {
-  vst_strncpy(text, kVendorName, kVstMaxVendorStrLen);
-  return true;
+// -----------------------------------------------------------------------------
+// State serialization (optional — keep stubs for now)
+// -----------------------------------------------------------------------------
+tresult PLUGIN_API BinauralRendererVst::setState(IBStream* state) {
+  // Read plugin state if you serialize any parameters (none in this simplified example).
+  return kResultOk;
 }
 
-VstInt32 BinauralRendererVst::getVendorVersion() { return kVendorVersion; }
+tresult PLUGIN_API BinauralRendererVst::getState(IBStream* state) {
+  // Write plugin state if needed
+  return kResultOk;
+}
 
-void BinauralRendererVst::processReplacing(float** inputs, float** outputs,
-                                           VstInt32 sampleFrames) {
-  const VstInt32 numInputChannels = cEffect.numInputs;
-  const VstInt32 numOutputChannels = cEffect.numOutputs;
-  VstInt32 numOutputChannelsProcessed = 0;
+// -----------------------------------------------------------------------------
+// Actual Frame Processing
+// -----------------------------------------------------------------------------
+void BinauralRendererVst::processReplacing(int32 numInputChannels, float** inputs,
+                                           int32 numOutputChannels, float** outputs,
+                                           int32 sampleFrames, int32 sampleRate) {
+  int32 numOutputChannelsProcessed = 0;
 
   // Ignore zero input / output channel configurations.
   if (numOutputChannels == 0 || numInputChannels == 0) {
@@ -94,16 +200,16 @@ void BinauralRendererVst::processReplacing(float** inputs, float** outputs,
   }
 
   // Ignore mono output channel configuration.
-  if (numOutputChannels == static_cast<VstInt32>(kNumMonoChannels)) {
+  if (numOutputChannels == static_cast<int32>(kNumMonoChannels)) {
     std::fill_n(outputs[0], sampleFrames, 0.0f);
     return;
   }
 
   if (framesPerBuffer_ != sampleFrames ||
       numInputChannels_ != numInputChannels ||
-      sampleRateHz_ != static_cast<int>(getSampleRate())) {
+      sampleRateHz_ != static_cast<int>(sampleRate)) {
     if (!initBinauralSurroundRenderer(sampleFrames, numInputChannels,
-                                      static_cast<int>(getSampleRate()))) {
+                                      static_cast<int>(sampleRate))) {
       binauralSurroundRenderer_.reset();
     }
   }
@@ -112,18 +218,18 @@ void BinauralRendererVst::processReplacing(float** inputs, float** outputs,
     binauralSurroundRenderer_->AddPlanarInput(inputs, numInputChannels,
                                               sampleFrames);
     binauralSurroundRenderer_->GetPlanarStereoOutput(outputs, sampleFrames);
-    numOutputChannelsProcessed += static_cast<VstInt32>(kNumStereoChannels);
+    numOutputChannelsProcessed += static_cast<int32>(kNumStereoChannels);
   }
 
   // Clear remaining output buffers.
-  for (VstInt32 channel = numOutputChannelsProcessed;
+  for (int32 channel = numOutputChannelsProcessed;
        channel < numOutputChannels; ++channel) {
     std::fill_n(outputs[channel], sampleFrames, 0.0f);
   }
 }
 
 bool BinauralRendererVst::initBinauralSurroundRenderer(
-    VstInt32 framesPerBuffer, VstInt32 numInputChannels, int sampleRateHz) {
+    int32 framesPerBuffer, int32 numInputChannels, int sampleRateHz) {
   BinauralSurroundRenderer::SurroundFormat surround_format =
       BinauralSurroundRenderer::SurroundFormat::kInvalid;
   switch (numInputChannels) {
