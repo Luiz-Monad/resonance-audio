@@ -1,9 +1,17 @@
 #include "public.sdk/source/main/pluginfactory.h"
-#include "binaural_renderer_vst.h"
+#include "binaural_renderer_controller.h"
+#include "binaural_renderer_processor.h"
+#include "binaural_renderer_gui.h"
 
 namespace Steinberg { namespace Vst {
 
-static const FUID BinauralRendererProcessorUID(0xb9981ce8, 0xc7f1415d, 0x8bad4a8a, 0x6d1cb6e0);
+static FUnknown* createProcessorInstance(void*) { 
+    return (IAudioProcessor*)new BinauralRendererVst();
+}
+
+static FUnknown* createControllerInstance(void*) { 
+    return (IEditController*)new BinauralRendererVstController();
+}
 
 }}
 
@@ -21,6 +29,16 @@ BEGIN_FACTORY_DEF("Google",
                "Fx|Spatial",
                "1.0.0",
                kVstVersionString,
-               Steinberg::Vst::BinauralRendererVst::createInstance)
+               Steinberg::Vst::createProcessorInstance)
+
+    DEF_CLASS2(INLINE_UID_FROM_FUID(BinauralRendererControllerUID),
+               PClassInfo::kManyInstances,
+               kVstComponentControllerClass,
+               "ResonanceAudioMonitorController",
+               0,
+               "Controller",
+               "1.0.0",
+               kVstVersionString,
+               Steinberg::Vst::createControllerInstance)
 
 END_FACTORY
