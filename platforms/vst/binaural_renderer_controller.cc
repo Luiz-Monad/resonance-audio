@@ -13,21 +13,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 */
 
 #include "binaural_renderer_controller.h"
-#include "base/source/fstreamer.h"
-#include "pluginterfaces/base/ibstream.h"
+
 #include <cmath>
 
 using namespace Steinberg;
 using namespace Steinberg::Vst;
 
 // -----------------------------------------------------------------------------
+// Parameters
+// -----------------------------------------------------------------------------
+
+// --- Channels ---
+ChannelsParameter::ChannelsParameter()
+	: RangeParameter(
+		STR16("Input Channels"), kParamNumInputChannels, STR16("ch"),
+		1.0, 64.0, 1.0  // min, max, default
+	)
+{
+	setPrecision(0);
+}
+ChannelsParameter* Steinberg::Vst::Param_NumInputChannels = new ChannelsParameter();
+
+// -----------------------------------------------------------------------------
 // Initialize
 // -----------------------------------------------------------------------------
 tresult PLUGIN_API BinauralRendererVstController::initialize(FUnknown* context) {
-	tresult result = EditController::initialize(context);
-	if (result != kResultOk) {
-		return result;
-	}
+	auto result = EditController::initialize(context);
+	if (result != kResultOk) return result;
+
+	// --- Channels ---
+	parameters.addParameter(Param_NumInputChannels);
 
 	return kResultOk;
 }
@@ -49,5 +64,14 @@ tresult PLUGIN_API BinauralRendererVstController::setComponentState(IBStream* st
 
 	IBStreamer streamer(state, kLittleEndian);
 
-	return kResultFalse;
+	updatingParams_ = true;
+
+	// --- Channels ---
+	int16 savedChannels;
+	if (!streamer.readInt16(savedChannels)) return kResultFalse;
+	setParamNormalized(kParamNumInputChannels, savedChannels);
+
+	updatingParams_ = false;
+
+	return kResultOk;
 }

@@ -19,14 +19,15 @@ limitations under the License.
 
 #include <memory>
 
+#include "binaural_renderer_controller.h"
+
 // Resonance API
 #include "api/binaural_surround_renderer.h"
 
 // VST3 SDK
+#include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
-#include "pluginterfaces/vst/vsttypes.h"
-#include "pluginterfaces/base/funknown.h"
-#include "pluginterfaces/base/ustring.h"
+#include "public.sdk/source/vst/vstrepresentation.h"
 
 namespace Steinberg {
 namespace Vst {
@@ -68,30 +69,8 @@ protected:
 	// Parameter handling.
 	void handleParameterChanges(IParameterChanges* changes);
 
-	// Processing.
-	void processReplacing(int32 numInputs, float** inputs,
-		int32 numOutputs, float** outputs,
-		int32 sampleFrames, int32 sampleRate);
-
-	// Creates |BinauralSurroundRenderer| instances.
-	bool initBinauralSurroundRenderer(int32 framesPerBuffer,
-		int32 numInputChannels,
-		int sampleRateHz);
-
-	// Buffer size |binauralSurroundRenderer_| has been initialized with.
-	int32 framesPerBuffer_;
-
-	// Buffer size |binauralSurroundRenderer_| has been initialized with.
-	int32 numInputChannels_;
-
-	// Sample rate |binauralSurroundRenderer_| has been initialized with.
-	int sampleRateHz_;
-
-	// |BinauralSurroundRenderer| instance.
-	std::unique_ptr<vraudio::BinauralSurroundRenderer> binauralSurroundRenderer_;
 };
 
-}
-} // namespace Steinberg::Vst
+}} // namespace Steinberg::Vst
 
 #endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_PROCESSOR_H_

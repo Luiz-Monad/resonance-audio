@@ -20,9 +20,9 @@ limitations under the License.
 #include <memory>
 
 // VST3 SDK
+#include "base/source/fstreamer.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
-#include "vstgui/vstgui.h"
-#include "base/source/fstring.h"
+#include "public.sdk/source/vst/vstrepresentation.h"
 
 namespace Steinberg {
 namespace Vst {
@@ -36,18 +36,23 @@ static const FUID BinauralRendererControllerUID(0x3daf4aa0, 0xe51045d2, 0x99c852
 // Parameter IDs
 // -----------------------------------------------------------------------------
 enum BinauralParams : ParamID {
-	// XYZ Coordinates
-	kParamXPos = 0,
-	kParamYPos = 1,
-	kParamZPos = 2,
 
-	// Spherical Coordinates
-	kParamAzimuth = 3,
-	kParamAltitude = 4,
-	kParamDistance = 5,
+	// Ambix num of channels + Mono
+	kParamNumInputChannels = 1,
 
 	kNumParams
 };
+
+// -----------------------------------------------------------------------------
+// Parameters
+// -----------------------------------------------------------------------------
+
+// --- Channels ---
+class ChannelsParameter : public RangeParameter {
+public:
+	ChannelsParameter();
+};
+extern ChannelsParameter* Param_NumInputChannels;
 
 //-----------------------------------------------------------------------------
 // BinauralRendererVstController
@@ -69,13 +74,10 @@ public:
 	tresult PLUGIN_API setComponentState(IBStream* state) override;
 
 private:
-
 	// Prevent recursive updates
 	bool updatingParams_ = false;
 };
 
-
-}
-} // namespace Steinberg::Vst
+}} // namespace Steinberg::Vst
 
 #endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_CONTROLLER_H_
