@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+set -x
 # Change working directory to script folder
 SCRIPT_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 cd "${SCRIPT_DIR}"
@@ -29,7 +29,7 @@ ANDROID_NDK="~/android-ndk-r15c/"
 ANDROID_NATIVE_API_LEVEL="21"
 ANDROID_ABI="armeabi-v7a with NEON"
 
-MSVC_GENERATOR="Visual Studio 14 2015 Win64"
+MSVC_GENERATOR="Visual Studio 17 2022"
 
 function show_help()
 {

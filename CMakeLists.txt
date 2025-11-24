@@ -42,7 +42,7 @@ option(BUILD_GEOMETRICAL_ACOUSTICS_TESTS "Build Resonance Audio's Geometrical Ac
 option(BUILD_WWISE_AUTHORING_PLUGIN "Build Resonance Audio WWise Authoring Plugin" OFF)
 option(BUILD_WWISE_SOUND_ENGINE_PLUGIN "Build Resonance Audio WWise Sound Engine Plugin." OFF)
 option(BUILD_FMOD_PLUGIN "Build FMOD Resonance Audio Plugin" OFF)
-option(BUILD_VST_MONITOR_PLUGIN "Build Resonance Audio VST Monitor Plugin" ON)
+option(BUILD_VST_MONITOR_PLUGIN "Build Resonance Audio VST Monitor Plugin" OFF)
 
 if (IOS_PLATFORM STREQUAL "OS" OR IOS_PLATFORM MATCHES "SIMULATOR")
     message(STATUS "iOS toolchain detected")

@@ -13,6 +13,7 @@ third_party/VST_SDK/
 third_party/WwiseIncludes/
 
 # Ignore build artifacts and install directories by default
+.build/
 build/
 install/
 
