@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <cmath>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/aligned_allocator.h"
 #include "base/logging.h"
 #include "geometrical_acoustics/acoustic_ray.h"

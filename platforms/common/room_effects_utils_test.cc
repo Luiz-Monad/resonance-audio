@@ -19,7 +19,7 @@ limitations under the License.
 #include <memory>
 #include <string>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/constants_and_types.h"
 #include "platforms/common/room_properties.h"
 

@@ -16,7 +16,7 @@ limitations under the License.
 
 #include "node/node.h"
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 
 namespace vraudio {
 

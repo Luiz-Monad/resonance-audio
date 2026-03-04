@@ -21,7 +21,7 @@ limitations under the License.
 #include <condition_variable>
 #include <mutex>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 
 namespace vraudio {
 

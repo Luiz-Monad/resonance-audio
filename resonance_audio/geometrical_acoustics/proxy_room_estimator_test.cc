@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <random>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "geometrical_acoustics/acoustic_source.h"
 #include "geometrical_acoustics/test_util.h"
 #include "platforms/common/room_effects_utils.h"

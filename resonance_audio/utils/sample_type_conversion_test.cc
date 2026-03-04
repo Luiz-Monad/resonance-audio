@@ -16,7 +16,7 @@ limitations under the License.
 
 #include "utils/sample_type_conversion.h"
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 
 namespace vraudio {
 

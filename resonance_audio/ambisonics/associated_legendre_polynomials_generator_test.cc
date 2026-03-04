@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <cmath>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/constants_and_types.h"
 #include "base/misc_math.h"
 

@@ -21,7 +21,7 @@ limitations under the License.
 #include <vector>
 
 #include "base/integral_types.h"
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/logging.h"
 #include "utils/task_thread_pool.h"
 

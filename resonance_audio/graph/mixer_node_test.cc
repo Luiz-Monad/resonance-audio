@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <algorithm>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/audio_buffer.h"
 #include "base/logging.h"
 #include "graph/system_settings.h"

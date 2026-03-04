@@ -20,7 +20,7 @@ limitations under the License.
 #include <random>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/logging.h"
 #include "geometrical_acoustics/path_tracer.h"
 

@@ -20,7 +20,7 @@ limitations under the License.
 #include <vector>
 
 #include "base/integral_types.h"
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/simd_utils.h"
 
 using vraudio::AlignedAllocator;

@@ -22,7 +22,7 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/constants_and_types.h"
 #include "geometrical_acoustics/acoustic_listener.h"
 #include "geometrical_acoustics/acoustic_ray.h"

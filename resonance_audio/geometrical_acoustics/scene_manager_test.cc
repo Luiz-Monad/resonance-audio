@@ -20,7 +20,7 @@ limitations under the License.
 #include <random>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "Eigen/Core"
 #include "geometrical_acoustics/acoustic_listener.h"
 #include "geometrical_acoustics/acoustic_ray.h"

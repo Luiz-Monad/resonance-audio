@@ -23,7 +23,7 @@ limitations under the License.
 #include <thread>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/logging.h"
 
 namespace vraudio {

@@ -20,8 +20,8 @@ limitations under the License.
 #include <cmath>
 #include <string>
 
-#include "third_party/googletest/googlemock/include/gmock/gmock.h"
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googlemock/include/gmock/gmock.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/audio_buffer.h"
 #include "base/constants_and_types.h"
 #include "base/logging.h"

@@ -20,7 +20,7 @@ limitations under the License.
 #include <utility>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "api/resonance_audio_api.h"
 #include "base/constants_and_types.h"
 #include "utils/test_util.h"

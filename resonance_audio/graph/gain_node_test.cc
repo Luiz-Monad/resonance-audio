@@ -20,7 +20,7 @@ limitations under the License.
 #include <memory>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/audio_buffer.h"
 #include "base/constants_and_types.h"
 #include "graph/buffered_source_node.h"

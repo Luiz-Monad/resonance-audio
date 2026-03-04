@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <algorithm>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "ambisonics/ambisonic_codec_impl.h"
 #include "base/constants_and_types.h"
 #include "utils/planar_interleaved_conversion.h"

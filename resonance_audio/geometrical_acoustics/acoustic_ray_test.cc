@@ -16,7 +16,7 @@ limitations under the License.
 
 #include "geometrical_acoustics/acoustic_ray.h"
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/logging.h"
 #include "geometrical_acoustics/test_util.h"
 

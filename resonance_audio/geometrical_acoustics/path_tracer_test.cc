@@ -21,7 +21,7 @@ limitations under the License.
 #include <unordered_set>
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "geometrical_acoustics/mesh.h"
 #include "geometrical_acoustics/test_util.h"
 

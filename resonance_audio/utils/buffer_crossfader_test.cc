@@ -16,7 +16,7 @@ limitations under the License.
 
 #include "utils/buffer_crossfader.h"
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "base/audio_buffer.h"
 #include "base/constants_and_types.h"
 #include "base/logging.h"

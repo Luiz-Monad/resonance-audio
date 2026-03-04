@@ -20,7 +20,7 @@ limitations under the License.
 #include <functional>
 #include <random>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "Eigen/Dense"
 #include "geometrical_acoustics/test_util.h"
 

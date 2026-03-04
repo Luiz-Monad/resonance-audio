@@ -18,7 +18,7 @@ limitations under the License.
 
 #include <vector>
 
-#include "third_party/googletest/googletest/include/gtest/gtest.h"
+#include "googletest/include/gtest/gtest.h"
 #include "ambisonics/ambisonic_lookup_table.h"
 #include "ambisonics/utils.h"
 #include "api/resonance_audio_api.h"
