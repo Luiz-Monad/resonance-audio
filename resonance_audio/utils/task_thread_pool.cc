@@ -90,8 +90,7 @@ class TaskThreadPool::WorkerThread {
 };
 
 TaskThreadPool::TaskThreadPool()
-    : num_worker_threads_available_(0),
-      is_pool_running_(false) {}
+    : num_worker_threads_available_(0), is_pool_running_(false) {}
 
 TaskThreadPool::~TaskThreadPool() { StopThreadPool(); }
 
@@ -212,7 +211,9 @@ void TaskThreadPool::WorkerThread::Join() {
   DCHECK(!parent_pool_->IsPoolRunning());
   // Aquire and release lock to assure that the notify cannot happen between the
   // check of the predicate and wait of the |push_conditional_|.
-  { std::lock_guard<std::mutex> lock(execute_task_mutex_); }
+  {
+    std::lock_guard<std::mutex> lock(execute_task_mutex_);
+  }
   execute_task_condition_.notify_one();
   if (task_thread_.joinable()) {
     task_thread_.join();

@@ -60,8 +60,7 @@ TEST_F(CollectionKernelTest, CollectOneRayTest) {
 
   // Collect impulse response.
   const float listener_sphere_radius = 0.1f;
-  CollectionKernel collection_kernel(
-      listener_sphere_radius, kSamplingRateHz);
+  CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
   collection_kernel.Collect(ray, 1.0f, &listener);
 
   // Validate the impulse response.
@@ -102,8 +101,7 @@ TEST_F(CollectionKernelTest, DiscardContributionTest) {
 
   // Collect impulse response.
   const float listener_sphere_radius = 0.1f;
-  CollectionKernel collection_kernel(
-      listener_sphere_radius, kSamplingRateHz);
+  CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
   collection_kernel.Collect(ray, 1.0f, &listener);
 
   // Validate that the impulse responses are all zero.
@@ -129,8 +127,7 @@ TEST_F(CollectionKernelTest, CollectOneRayWithPriorDistanceTest) {
 
   // Collect impulse response.
   const float listener_sphere_radius = 0.1f;
-  CollectionKernel collection_kernel(
-      listener_sphere_radius, kSamplingRateHz);
+  CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
   collection_kernel.Collect(ray, 1.0f, &listener);
 
   // Validate the impulse response.
@@ -176,8 +173,7 @@ TEST_F(CollectionKernelTest, SphereSizeEnergyFactorTest) {
   // Expect that the energy values are energy * (4 / radius^2).
   for (const float listener_sphere_radius : {0.1f, 0.2f, 0.3f, 0.4f, 0.5f}) {
     AcousticListener listener(listener_position, kImpulseResponseNumSamples);
-    CollectionKernel collection_kernel(
-        listener_sphere_radius, kSamplingRateHz);
+    CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
     collection_kernel.Collect(ray, 1.0f, &listener);
     const float expected_sphere_size_energy_factor =
         4.0f / listener_sphere_radius / listener_sphere_radius;
@@ -210,8 +206,7 @@ TEST_F(CollectionKernelTest, CollectMultipleRaysWithWeightsTest) {
 
   // Collect impulse responses with different weights.
   const float listener_sphere_radius = 0.1f;
-  CollectionKernel collection_kernel(
-      listener_sphere_radius, kSamplingRateHz);
+  CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
   const std::vector<float> weights = {8.0f, 4.0f, 2.0f, 1.0f, 0.5f};
   for (size_t i = 0; i < rays.size(); ++i) {
     collection_kernel.Collect(rays[i], weights[i], &listener);
@@ -273,8 +268,7 @@ TEST_F(CollectionKernelTest, CollectRaysInMonteCarloIntegrationTest) {
   listener_sphere.center[2] = listener.position[2];
   listener_sphere.radius = listener_sphere_radius;
   listener_sphere.geometry_id = 1;
-  CollectionKernel collection_kernel(
-      listener_sphere_radius, kSamplingRateHz);
+  CollectionKernel collection_kernel(listener_sphere_radius, kSamplingRateHz);
   const float monte_carlo_weight = 1.0f / static_cast<float>(total_num_rays);
   for (AcousticRay& ray : rays) {
     SphereIntersection(listener_sphere, &ray);

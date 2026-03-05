@@ -39,7 +39,7 @@ class BinauralSurroundRendererImpl : public BinauralSurroundRenderer {
   // @param sample_rate_hz Sample rate of audio buffers.
   BinauralSurroundRendererImpl(size_t frames_per_buffer, int sample_rate_hz);
 
-  ~BinauralSurroundRendererImpl() override{};
+  ~BinauralSurroundRendererImpl() override {};
 
   // Initializes surround sound decoding.
   //

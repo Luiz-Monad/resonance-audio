@@ -26,7 +26,6 @@ limitations under the License.
 #include <cstddef>  // size_t declaration.
 #include <cstdint>  // int16_t declaration.
 
-
 typedef int16_t int16;
 
 namespace vraudio {
@@ -413,4 +412,3 @@ class ResonanceAudioApi {
 }  // namespace vraudio
 
 #endif  // RESONANCE_AUDIO_API_RESONANCE_AUDIO_API_H_
-

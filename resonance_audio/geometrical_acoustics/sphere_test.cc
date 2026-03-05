@@ -33,8 +33,7 @@ namespace {
 // The signature of RTCBoundsFunc does not comply with Google's C++ style,
 
 static void EmbreeSphereBoundsFunction(void* user_data, size_t index,
-                                       RTCBounds& output_bounds
-                                       ) {
+                                       RTCBounds& output_bounds) {
   Sphere* spheres = static_cast<Sphere*>(user_data);
   const Sphere& sphere = spheres[index];
   SphereBounds(sphere, &output_bounds);
@@ -44,8 +43,7 @@ static void EmbreeSphereBoundsFunction(void* user_data, size_t index,
 // to be passed to rtcSetIntersectFunction().
 // The signature of RTCIntersectFunc does not comply with Google's C++ style,
 
-static void EmbreeSphereIntersectFunction(void* user_data,
-                                          RTCRay& ray,
+static void EmbreeSphereIntersectFunction(void* user_data, RTCRay& ray,
                                           size_t index) {
   Sphere* spheres = static_cast<Sphere*>(user_data);
   const Sphere& sphere = spheres[index];
@@ -97,8 +95,7 @@ TEST(Sphere, RayIntersectSphereTest) {
   EXPECT_EQ(ray.intersected_geometry_id(), sphere_geometry_id);
 
   // Expect that the intersection point is at (0.5, 0, -sqrt(3)/2).
-  const float expected_intersection_point[3] = {0.5f, 0.0f,
-                                                -0.5f * kSqrtThree};
+  const float expected_intersection_point[3] = {0.5f, 0.0f, -0.5f * kSqrtThree};
   float intersection_point[3];
   intersection_point[0] = ray.origin()[0] + ray.t_far() * ray.direction()[0];
   intersection_point[1] = ray.origin()[1] + ray.t_far() * ray.direction()[1];
@@ -236,8 +233,7 @@ TEST_F(SphereTest, AcousticRayIntersectSphereTest) {
   EXPECT_EQ(ray.intersected_geometry_id(), sphere_geometry_id);
 
   // Expect that the intersection point is at (0.5, 0, -sqrt(3)/2).
-  const float expected_intersection_point[3] = {0.5f, 0.0f,
-                                                -0.5f * kSqrtThree};
+  const float expected_intersection_point[3] = {0.5f, 0.0f, -0.5f * kSqrtThree};
   float intersection_point[3];
   intersection_point[0] = ray.origin()[0] + ray.t_far() * ray.direction()[0];
   intersection_point[1] = ray.origin()[1] + ray.t_far() * ray.direction()[1];

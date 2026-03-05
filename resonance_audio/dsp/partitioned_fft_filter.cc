@@ -152,7 +152,6 @@ void PartitionedFftFilter::SetFilterLength(size_t new_filter_size) {
 void PartitionedFftFilter::SetTimeDomainKernel(
     const AudioBuffer::Channel& kernel) {
 
-
   // Precomputes a set of floor(|filter_size_|/(|fft_size|/2)) frequency domain
   // kernels, one for each partition of the |kernel|. This allows to reduce
   // computational complexity if a fixed set of filter kernels is needed. The
@@ -205,7 +204,6 @@ void PartitionedFftFilter::SetFreqDomainKernel(const FreqDomainBuffer& kernel) {
 }
 
 void PartitionedFftFilter::Filter(const FreqDomainBuffer::Channel& input) {
-
 
   DCHECK_EQ(input.size(), fft_size_);
   std::copy_n(input.begin(), fft_size_,

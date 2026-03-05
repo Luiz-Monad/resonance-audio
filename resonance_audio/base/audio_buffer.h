@@ -27,7 +27,6 @@ limitations under the License.
 #include "base/logging.h"
 #include "base/simd_utils.h"
 
-
 namespace vraudio {
 
 // Audio buffer that manages multi-channel audio data in a planar data format.

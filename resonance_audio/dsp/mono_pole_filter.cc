@@ -20,7 +20,6 @@ limitations under the License.
 
 #include "base/constants_and_types.h"
 
-
 namespace vraudio {
 
 MonoPoleFilter::MonoPoleFilter(float coefficient) : previous_output_(0.0f) {

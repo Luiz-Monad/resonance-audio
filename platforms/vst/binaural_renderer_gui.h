@@ -47,7 +47,7 @@ class BinauralRendererView : public VSTGUI::CView, public EditorView {
   // Optional � handle GUI resize or parameter updates
   tresult PLUGIN_API onWheel(float distance) SMTG_OVERRIDE { return kResultOk; }
 
-protected:
+ protected:
   // Internal frame (VSTGUI root container)
   VSTGUI::CFrame* frame_ = nullptr;
 
@@ -58,6 +58,7 @@ protected:
   EditController* controller_ = nullptr;
 };
 
-}}  // namespace Steinberg::Vst
+}  // namespace Vst
+}  // namespace Steinberg
 
 #endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_GUI_H_

@@ -52,7 +52,6 @@ AudioBuffer::AudioBuffer(AudioBuffer&& other) {
 
 void AudioBuffer::InitChannelViews(size_t num_channels) {
 
-
   const size_t num_frames_to_next_channel = FindNextAlignedArrayIndex(
       num_frames_, sizeof(float), kMemoryAlignmentBytes);
 

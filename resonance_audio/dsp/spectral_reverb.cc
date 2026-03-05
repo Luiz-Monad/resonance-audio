@@ -181,7 +181,6 @@ void SpectralReverb::Process(const AudioBuffer::Channel& input,
   DCHECK_EQ(input.size(), right_out->size());
   DCHECK_EQ(input.size(), frames_per_buffer_);
 
-
   if (is_gain_near_zero_ || is_feedback_near_zero_) {
     left_out->Clear();
     right_out->Clear();

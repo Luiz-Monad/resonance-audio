@@ -30,7 +30,6 @@ typedef int SourceId;
 // class construction.
 static const SourceId kInvalidSourceId = -1;
 
-
 // Defines memory alignment of audio buffers. Note that not only the first
 // element of the |data_| buffer is memory aligned but also the address of the
 // first elements of the |ChannelView|s.

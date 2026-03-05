@@ -260,7 +260,6 @@ bool HoaRotator::Process(const WorldRotation& target_rotation,
 
 void HoaRotator::UpdateRotationMatrix(const WorldRotation& rotation) {
 
-
   // There is no need to update 0th order 1-element sub-matrix.
   // First order sub-matrix can be updated directly from the WorldRotation
   // quaternion. However, we must account for the flipped left-right and

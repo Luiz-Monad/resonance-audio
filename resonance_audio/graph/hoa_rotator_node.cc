@@ -19,7 +19,6 @@ limitations under the License.
 #include "ambisonics/utils.h"
 #include "base/logging.h"
 
-
 namespace vraudio {
 
 HoaRotatorNode::HoaRotatorNode(SourceId source_id,
@@ -34,7 +33,6 @@ HoaRotatorNode::HoaRotatorNode(SourceId source_id,
 }
 
 const AudioBuffer* HoaRotatorNode::AudioProcess(const NodeInput& input) {
-
 
   const AudioBuffer* input_buffer = input.GetSingleInput();
   DCHECK(input_buffer);

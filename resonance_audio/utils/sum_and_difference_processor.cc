@@ -19,7 +19,6 @@ limitations under the License.
 #include "base/constants_and_types.h"
 #include "base/logging.h"
 
-
 namespace vraudio {
 
 SumAndDifferenceProcessor::SumAndDifferenceProcessor(size_t num_frames)

@@ -20,7 +20,6 @@ limitations under the License.
 
 #include "base/constants_and_types.h"
 
-
 namespace vraudio {
 
 GainMixerNode::GainMixerNode(const AttenuationType& attenuation_type,
@@ -40,7 +39,6 @@ bool GainMixerNode::CleanUp() {
 }
 
 const AudioBuffer* GainMixerNode::AudioProcess(const NodeInput& input) {
-
 
   if (mute_enabled_) {
     // Skip processing and output nullptr audio buffer.

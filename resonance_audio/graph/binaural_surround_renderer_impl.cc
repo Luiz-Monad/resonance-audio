@@ -41,8 +41,7 @@ const float kGain = 0.5f;
 
 BinauralSurroundRendererImpl::BinauralSurroundRendererImpl(
     size_t frames_per_buffer, int sample_rate_hz)
-    :
-      resonance_audio_api_(nullptr),
+    : resonance_audio_api_(nullptr),
       frames_per_buffer_(frames_per_buffer),
       sample_rate_hz_(sample_rate_hz),
       surround_format_(kInvalid),
@@ -50,8 +49,7 @@ BinauralSurroundRendererImpl::BinauralSurroundRendererImpl(
       output_buffer_(kNumStereoChannels, frames_per_buffer),
       total_frames_buffered_(0),
       num_zero_padded_frames_(0),
-      output_gain_(1.0f) {
-}
+      output_gain_(1.0f) {}
 
 bool BinauralSurroundRendererImpl::Init(SurroundFormat surround_format) {
   surround_format_ = surround_format;
@@ -113,13 +111,11 @@ bool BinauralSurroundRendererImpl::Init(SurroundFormat surround_format) {
 }
 
 BinauralSurroundRendererImpl::BinauralSurroundRendererImpl()
-    :
-      resonance_audio_api_(nullptr),
+    : resonance_audio_api_(nullptr),
       frames_per_buffer_(0),
       sample_rate_hz_(0),
       total_frames_buffered_(0),
-      num_zero_padded_frames_(0) {
-}
+      num_zero_padded_frames_(0) {}
 
 AudioBuffer* BinauralSurroundRendererImpl::BufferPartitionerCallback(
     AudioBuffer* processed_buffer) {

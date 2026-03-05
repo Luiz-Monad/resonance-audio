@@ -56,7 +56,6 @@ AmbisonicBinauralDecoderNode::~AmbisonicBinauralDecoderNode() {}
 const AudioBuffer* AmbisonicBinauralDecoderNode::AudioProcess(
     const NodeInput& input) {
 
-
   const bool was_stereo_speaker_mode_enabled = is_stereo_speaker_mode_;
   is_stereo_speaker_mode_ = system_settings_.IsStereoSpeakerModeEnabled();
 

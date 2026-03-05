@@ -20,7 +20,6 @@ limitations under the License.
 #include "base/constants_and_types.h"
 #include "base/logging.h"
 
-
 namespace vraudio {
 
 AmbisonicMixingEncoderNode::AmbisonicMixingEncoderNode(
@@ -35,7 +34,6 @@ AmbisonicMixingEncoderNode::AmbisonicMixingEncoderNode(
 
 const AudioBuffer* AmbisonicMixingEncoderNode::AudioProcess(
     const NodeInput& input) {
-
 
   const WorldPosition& listener_position = system_settings_.GetHeadPosition();
   const WorldRotation& listener_rotation = system_settings_.GetHeadRotation();

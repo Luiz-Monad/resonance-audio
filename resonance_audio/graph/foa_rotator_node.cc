@@ -18,7 +18,6 @@ limitations under the License.
 
 #include "base/logging.h"
 
-
 namespace vraudio {
 
 FoaRotatorNode::FoaRotatorNode(SourceId source_id,
@@ -31,7 +30,6 @@ FoaRotatorNode::FoaRotatorNode(SourceId source_id,
 }
 
 const AudioBuffer* FoaRotatorNode::AudioProcess(const NodeInput& input) {
-
 
   // Get the soundfield input buffer.
   const AudioBuffer* input_buffer = input.GetSingleInput();

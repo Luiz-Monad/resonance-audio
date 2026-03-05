@@ -28,8 +28,7 @@ namespace {
 // The signature of RTCBoundsFunc does not comply with Google's C++ style,
 
 static void EmbreeSphereBoundsFunction(void* user_data, size_t index,
-                                       RTCBounds& output_bounds
-) {
+                                       RTCBounds& output_bounds) {
   Sphere* spheres = static_cast<Sphere*>(user_data);
   const Sphere& sphere = spheres[index];
   SphereBounds(sphere, &output_bounds);
@@ -39,8 +38,7 @@ static void EmbreeSphereBoundsFunction(void* user_data, size_t index,
 // to be passed to rtcSetIntersectFunction().
 // The signature of RTCIntersectFunc does not comply with Google's C++ style,
 
-static void EmbreeSphereIntersectFunction(void* user_data,
-                                          RTCRay& ray,
+static void EmbreeSphereIntersectFunction(void* user_data, RTCRay& ray,
                                           size_t index) {
   Sphere* const spheres = static_cast<Sphere*>(user_data);
   const Sphere& sphere = spheres[index];

@@ -40,7 +40,6 @@ NearFieldEffectNode::NearFieldEffectNode(SourceId source_id,
 
 const AudioBuffer* NearFieldEffectNode::AudioProcess(const NodeInput& input) {
 
-
   const AudioBuffer* input_buffer = input.GetSingleInput();
   DCHECK(input_buffer);
   DCHECK_EQ(input_buffer->num_channels(), 1U);
@@ -52,7 +51,6 @@ const AudioBuffer* NearFieldEffectNode::AudioProcess(const NodeInput& input) {
     LOG(WARNING) << "Could not find source parameters";
     return nullptr;
   }
-
 
   DCHECK_EQ(pan_gains_.size(), kNumStereoChannels);
   const float near_field_gain = source_parameters->near_field_gain;

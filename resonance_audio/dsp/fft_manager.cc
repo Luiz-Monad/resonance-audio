@@ -23,7 +23,6 @@ limitations under the License.
 #include "base/misc_math.h"
 #include "base/simd_utils.h"
 
-
 // Prevent Visual Studio from complaining about std::copy_n.
 #if defined(_WIN32)
 #define _SCL_SECURE_NO_WARNINGS
@@ -74,7 +73,6 @@ FftManager::~FftManager() {
 void FftManager::FreqFromTimeDomain(const AudioBuffer::Channel& time_channel,
                                     AudioBuffer::Channel* freq_channel) {
 
-
   DCHECK(freq_channel);
   DCHECK_EQ(freq_channel->size(), fft_size_);
   DCHECK_LE(time_channel.size(), fft_size_);
@@ -93,7 +91,6 @@ void FftManager::FreqFromTimeDomain(const AudioBuffer::Channel& time_channel,
 
 void FftManager::TimeFromFreqDomain(const AudioBuffer::Channel& freq_channel,
                                     AudioBuffer::Channel* time_channel) {
-
 
   DCHECK(time_channel);
   DCHECK_EQ(freq_channel.size(), fft_size_);

@@ -88,7 +88,7 @@ class BiquadFilter {
   // @param coefficients The biquad coeffients for use in filtering.
   // @return An output value to be placed in a Planar or Interleaved buffer.
   float FilterSample(float input, std::array<float, 2>* delay_line,
-                            const BiquadCoefficients& coefficients);
+                     const BiquadCoefficients& coefficients);
 
   // If InterpolateToState() has been called to assign new filter coefficients,
   // this function will be called samples_to_iterate_over_ times within the next

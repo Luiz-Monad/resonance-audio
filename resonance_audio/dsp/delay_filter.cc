@@ -21,7 +21,6 @@ limitations under the License.
 #include "base/constants_and_types.h"
 #include "base/misc_math.h"
 
-
 namespace vraudio {
 // The following explains the behaviour of the delay line when a change to the
 // delay length is made. Initially |delay| is 2, |frames_per_buffer_|

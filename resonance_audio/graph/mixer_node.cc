@@ -16,8 +16,6 @@ limitations under the License.
 
 #include "graph/mixer_node.h"
 
-
-
 namespace vraudio {
 
 MixerNode::MixerNode(const SystemSettings& system_settings, size_t num_channels)
@@ -38,7 +36,6 @@ bool MixerNode::CleanUp() {
 }
 
 const AudioBuffer* MixerNode::AudioProcess(const NodeInput& input) {
-
 
   mixer_.Reset();
 

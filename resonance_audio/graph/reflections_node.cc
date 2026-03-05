@@ -20,7 +20,6 @@ limitations under the License.
 #include "base/logging.h"
 #include "base/misc_math.h"
 
-
 namespace vraudio {
 
 ReflectionsNode::ReflectionsNode(const SystemSettings& system_settings)

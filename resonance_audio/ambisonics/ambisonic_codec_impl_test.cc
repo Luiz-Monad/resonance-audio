@@ -218,8 +218,6 @@ TEST_F(AmbisonicCodecTest, EncodeBufferDecodeBufferIsInverse) {
     }
   }
 
-
-
   AudioBuffer encoded_buffer(kNumSphericalHarmonics, kNumElements);
   // Produce the encoded version of unencoded_buffer.
   for (int element = 0; element < kNumElements; ++element) {

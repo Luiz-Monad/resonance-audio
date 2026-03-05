@@ -31,8 +31,7 @@ limitations under the License.
 namespace vraudio {
 
 GraphManager::GraphManager(const SystemSettings& system_settings)
-    :
-      room_effects_enabled_(true),
+    : room_effects_enabled_(true),
       config_(GlobalConfig()),
       system_settings_(system_settings),
       fft_manager_(system_settings.GetFramesPerBuffer()),
@@ -243,10 +242,7 @@ void GraphManager::DestroySource(SourceId source_id) {
 
 std::shared_ptr<SinkNode> GraphManager::GetSinkNode() { return output_node_; }
 
-void GraphManager::Process() {
-
-  output_node_->ReadInputs();
-}
+void GraphManager::Process() { output_node_->ReadInputs(); }
 
 AudioBuffer* GraphManager::GetMutableAudioBuffer(SourceId source_id) {
   auto source_node = LookupSourceNode(source_id);

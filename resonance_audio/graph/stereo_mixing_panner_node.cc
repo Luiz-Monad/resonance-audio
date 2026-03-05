@@ -33,7 +33,6 @@ StereoMixingPannerNode::StereoMixingPannerNode(
 const AudioBuffer* StereoMixingPannerNode::AudioProcess(
     const NodeInput& input) {
 
-
   const WorldPosition& listener_position = system_settings_.GetHeadPosition();
   const WorldRotation& listener_rotation = system_settings_.GetHeadRotation();
 
@@ -53,7 +52,6 @@ const AudioBuffer* StereoMixingPannerNode::AudioProcess(
                          source_transform.position, &relative_direction);
     const SphericalAngle source_direction =
         SphericalAngle::FromWorldPosition(relative_direction);
-
 
     CalculateStereoPanGains(source_direction, &coefficients_);
 

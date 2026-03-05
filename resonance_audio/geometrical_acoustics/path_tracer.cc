@@ -43,53 +43,52 @@ std::vector<Path> PathTracer::TracePaths(const AcousticSource& source,
   std::vector<AcousticRay> rays_from_source =
       source.GenerateStratifiedRays(num_rays, sqrt_num_rays);
   const unsigned int num_threads = GetNumberOfHardwareThreads();
-  ParallelFor(
-      num_threads, num_rays,
-      [&rays_from_source, &paths, this, max_depth,
-       energy_threshold](size_t ray_index) {
-        if (max_depth == 0) return;
-        Path& path = paths.at(ray_index);
+  ParallelFor(num_threads, num_rays,
+              [&rays_from_source, &paths, this, max_depth,
+               energy_threshold](size_t ray_index) {
+                if (max_depth == 0) return;
+                Path& path = paths.at(ray_index);
 
-        // Pre-allocate memory space for better performance.
-        path.rays.reserve(max_depth);
+                // Pre-allocate memory space for better performance.
+                path.rays.reserve(max_depth);
 
-        path.rays.push_back(rays_from_source[ray_index]);
-        size_t depth = 0;
-        while (true) {
-          AcousticRay& current_ray = path.rays.back();
+                path.rays.push_back(rays_from_source[ray_index]);
+                size_t depth = 0;
+                while (true) {
+                  AcousticRay& current_ray = path.rays.back();
 
-          // Stop generating new rays if the current ray escapes.
-          if (!current_ray.Intersect(scene_manager_.scene())) {
-            break;
-          }
+                  // Stop generating new rays if the current ray escapes.
+                  if (!current_ray.Intersect(scene_manager_.scene())) {
+                    break;
+                  }
 
-          // Stop generating new rays if |depth| reaches |max_depth|.
-          ++depth;
-          if (depth >= max_depth) {
-            break;
-          }
+                  // Stop generating new rays if |depth| reaches |max_depth|.
+                  ++depth;
+                  if (depth >= max_depth) {
+                    break;
+                  }
 
-          // Handle interactions with scene geometries.
-          const ReflectionKernel& reflection =
-              scene_manager_.GetAssociatedReflectionKernel(
-                  current_ray.intersected_primitive_id());
-          AcousticRay new_ray = reflection.Reflect(current_ray);
+                  // Handle interactions with scene geometries.
+                  const ReflectionKernel& reflection =
+                      scene_manager_.GetAssociatedReflectionKernel(
+                          current_ray.intersected_primitive_id());
+                  AcousticRay new_ray = reflection.Reflect(current_ray);
 
-          // Stop tracing if all energies in all frequency bands of the new ray
-          // are too low in energy.
-          bool is_energy_high_enough = false;
-          for (const float energy : new_ray.energies()) {
-            if (energy >= energy_threshold) {
-              is_energy_high_enough = true;
-              break;
-            }
-          }
-          if (!is_energy_high_enough) {
-            break;
-          }
-          path.rays.push_back(new_ray);
-        }
-      });
+                  // Stop tracing if all energies in all frequency bands of the
+                  // new ray are too low in energy.
+                  bool is_energy_high_enough = false;
+                  for (const float energy : new_ray.energies()) {
+                    if (energy >= energy_threshold) {
+                      is_energy_high_enough = true;
+                      break;
+                    }
+                  }
+                  if (!is_energy_high_enough) {
+                    break;
+                  }
+                  path.rays.push_back(new_ray);
+                }
+              });
   return paths;
 }
 

@@ -18,7 +18,6 @@ limitations under the License.
 
 #include <cmath>
 
-
 #include "dsp/gain.h"
 
 namespace vraudio {
@@ -36,7 +35,6 @@ GainNode::GainNode(SourceId source_id, size_t num_channels,
 }
 
 const AudioBuffer* GainNode::AudioProcess(const NodeInput& input) {
-
 
   const AudioBuffer* input_buffer = input.GetSingleInput();
   DCHECK(input_buffer);

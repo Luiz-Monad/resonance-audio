@@ -26,7 +26,6 @@ limitations under the License.
 
 #include "base/simd_utils.h"
 
-
 namespace vraudio {
 
 // Performs static assert checks on the types size and alignment parameters.
@@ -73,8 +72,10 @@ template <typename Type, size_t Alignment>
 class AlignedAllocator : public std::allocator<Type> {
  public:
   using Pointer = typename std::allocator_traits<std::allocator<Type>>::pointer;
-  using ConstPointer = typename std::allocator_traits<std::allocator<Type>>::const_pointer;
-  using SizeType = typename std::allocator_traits<std::allocator<Type>>::size_type;
+  using ConstPointer =
+      typename std::allocator_traits<std::allocator<Type>>::const_pointer;
+  using SizeType =
+      typename std::allocator_traits<std::allocator<Type>>::size_type;
 
   AlignedAllocator() { StaticAlignmentCheck<sizeof(Type), Alignment>(); }
 

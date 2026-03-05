@@ -222,8 +222,12 @@ void ThreadsafeFifo<T>::EnableBlockingSleepUntilMethods(bool enable) {
   // Taking the lock and dropping it immediately assure that the notify
   // cannot happen between the check of the predicate and wait of the
   // |fifo_empty_conditional_| and |fifo_full_conditional_|.
-  { std::lock_guard<std::mutex> lock(fifo_empty_mutex_); }
-  { std::lock_guard<std::mutex> lock(fifo_full_mutex_); }
+  {
+    std::lock_guard<std::mutex> lock(fifo_empty_mutex_);
+  }
+  {
+    std::lock_guard<std::mutex> lock(fifo_full_mutex_);
+  }
   fifo_empty_conditional_.notify_one();
   fifo_full_conditional_.notify_one();
 }

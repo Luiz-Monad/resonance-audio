@@ -29,7 +29,6 @@ limitations under the License.
 #include "base/misc_math.h"
 #include "base/simd_macros.h"
 
-
 namespace vraudio {
 
 namespace {

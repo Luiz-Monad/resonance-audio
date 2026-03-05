@@ -31,9 +31,8 @@ Eigen::Matrix<typename MatrixType::Scalar, MatrixType::ColsAtCompileTime,
               MatrixType::RowsAtCompileTime>
 Pseudoinverse(const MatrixType& matrix) {
   Eigen::JacobiSVD<Eigen::Matrix<typename MatrixType::Scalar, Eigen::Dynamic,
-                                 Eigen::Dynamic>> svd(matrix,
-                                                      Eigen::ComputeThinU |
-                                                          Eigen::ComputeThinV);
+                                 Eigen::Dynamic>>
+      svd(matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
   return svd.solve(
       Eigen::Matrix<typename MatrixType::Scalar, MatrixType::RowsAtCompileTime,
                     MatrixType::RowsAtCompileTime>::Identity(matrix.rows(),

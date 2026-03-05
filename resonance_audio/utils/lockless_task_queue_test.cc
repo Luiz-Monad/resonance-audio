@@ -59,8 +59,7 @@ class TaskProducer {
   TaskProducer(LocklessTaskQueue* queue, std::vector<size_t>* work_vector_ptr,
                int delay_ms)
       : producer_thread_(new std::thread(std::bind(
-            &TaskProducer::Produce, this, queue, work_vector_ptr, delay_ms))) {
-  }
+            &TaskProducer::Produce, this, queue, work_vector_ptr, delay_ms))) {}
 
   TaskProducer(TaskProducer&& task)
       : producer_thread_(std::move(task.producer_thread_)) {}

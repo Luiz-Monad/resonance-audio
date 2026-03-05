@@ -30,7 +30,6 @@ MonoFromSoundfieldNode::MonoFromSoundfieldNode(
 const AudioBuffer* MonoFromSoundfieldNode::AudioProcess(
     const NodeInput& input) {
 
-
   const AudioBuffer* input_buffer = input.GetSingleInput();
   DCHECK(input_buffer);
   DCHECK_EQ(input_buffer->source_id(), output_buffer_.source_id());

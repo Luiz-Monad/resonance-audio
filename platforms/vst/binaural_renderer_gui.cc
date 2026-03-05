@@ -43,8 +43,10 @@ BinauralRendererView::~BinauralRendererView() {
 //------------------------------------------------------------------------------
 // Check if host platform type is supported
 //------------------------------------------------------------------------------
-tresult PLUGIN_API BinauralRendererView::isPlatformTypeSupported(FIDString type) {
-  // Common supported types: kPlatformTypeHWND (Windows), kPlatformTypeNSView (macOS)
+tresult PLUGIN_API
+BinauralRendererView::isPlatformTypeSupported(FIDString type) {
+  // Common supported types: kPlatformTypeHWND (Windows), kPlatformTypeNSView
+  // (macOS)
   if (strcmp(type, kPlatformTypeHWND) == 0 ||
       strcmp(type, kPlatformTypeNSView) == 0) {
     return kResultTrue;
@@ -55,7 +57,8 @@ tresult PLUGIN_API BinauralRendererView::isPlatformTypeSupported(FIDString type)
 //------------------------------------------------------------------------------
 // Attach to parent window
 //------------------------------------------------------------------------------
-tresult PLUGIN_API BinauralRendererView::attached(void* parent, FIDString type) {
+tresult PLUGIN_API BinauralRendererView::attached(void* parent,
+                                                  FIDString type) {
   // Create background image (the same static PNG from VST2)
   CBitmap* bitmap = new CBitmap("resonance_audio.png");
   background_ = VSTGUI::owned(bitmap);
@@ -84,7 +87,8 @@ tresult PLUGIN_API BinauralRendererView::attached(void* parent, FIDString type) 
   frame_->forget();
 
   // Inform host of size
-  ViewRect viewRect(0, 0, static_cast<int32>(width), static_cast<int32>(height));
+  ViewRect viewRect(0, 0, static_cast<int32>(width),
+                    static_cast<int32>(height));
   setRect(viewRect);
 
   return kResultOk;
@@ -107,11 +111,12 @@ tresult PLUGIN_API BinauralRendererView::removed() {
 //------------------------------------------------------------------------------
 tresult PLUGIN_API BinauralRendererView::onSize(ViewRect* newSize) {
   if (frame_) {
-    frame_->setViewSize(CRect(0, 0,
-                              static_cast<CCoord>(newSize->right - newSize->left),
-                              static_cast<CCoord>(newSize->bottom - newSize->top)));
+    frame_->setViewSize(
+        CRect(0, 0, static_cast<CCoord>(newSize->right - newSize->left),
+              static_cast<CCoord>(newSize->bottom - newSize->top)));
   }
   return kResultOk;
 }
 
-}}  // namespace Steinberg::Vst
+}  // namespace Vst
+}  // namespace Steinberg

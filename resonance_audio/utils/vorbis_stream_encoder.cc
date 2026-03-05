@@ -47,13 +47,12 @@ bool VorbisStreamEncoder::InitializeForFile(const std::string& filename,
   switch (encoding_mode) {
     case EncodingMode::kVariableBitRate:
       return_value = vorbis_encode_init_vbr(
-          &vorbis_info_, static_cast<long>(num_channels),
-          sample_rate, quality);
+          &vorbis_info_, static_cast<long>(num_channels), sample_rate, quality);
       break;
     case EncodingMode::kAverageBitRate:
       return_value = vorbis_encode_init(
-          &vorbis_info_, static_cast<long>(num_channels),
-          sample_rate, -1 /* max_bitrate */, bitrate, -1 /* quality */);
+          &vorbis_info_, static_cast<long>(num_channels), sample_rate,
+          -1 /* max_bitrate */, bitrate, -1 /* quality */);
       break;
     case EncodingMode::kUndefined:
     default:

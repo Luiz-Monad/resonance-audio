@@ -210,24 +210,21 @@ class PreComputedCoeffsTest : public ::testing::Test {
       {1 /* ambisonic order */,
        SphericalAngle::FromDegrees(36.0f, 45.0f) /* source direction */,
        70.0f /* source spread */,
-       {1.20046f, 0.310569f, 0.528372f, 0.427462f}
-       /* expected coefficients */},
+       {1.20046f, 0.310569f, 0.528372f, 0.427462f} /* expected coefficients */},
 
       // Second order sound source.
       {2 /* ambisonic order */,
        SphericalAngle::FromDegrees(55.0f, -66.0f) /* source direction */,
        41.0f /* source spread */,
        {1.038650f, 0.337027f, -0.924096f, 0.2359899f, 0.124062f, -0.485807f,
-        0.6928289f, -0.340166f, -0.045155f}
-       /* expected coefficients */},
+        0.6928289f, -0.340166f, -0.045155f} /* expected coefficients */},
 
       // Third order sound source.
       {3 /* ambisonic order */,
        SphericalAngle::FromDegrees(-13.0f, 90.0f) /* source direction */,
        32.0f /* source spread */,
        {1.03237f, 0.0f, 1.02119f, 0.0f, 0.0f, 0.0f, 0.990433f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.898572f, 0.0f, 0.0f, 0.0f}
-       /* expected coefficients */}};
+        0.0f, 0.0f, 0.898572f, 0.0f, 0.0f, 0.0f} /* expected coefficients */}};
 };
 
 // Tests whether the lookup table returns correct coefficients for sources with

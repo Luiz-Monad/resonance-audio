@@ -19,7 +19,6 @@ limitations under the License.
 #include "ambisonics/utils.h"
 #include "base/constants_and_types.h"
 
-
 namespace vraudio {
 
 AmbisonicBinauralDecoder::AmbisonicBinauralDecoder(const AudioBuffer& sh_hrirs,

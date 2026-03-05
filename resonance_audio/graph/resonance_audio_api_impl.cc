@@ -458,7 +458,6 @@ void ResonanceAudioApiImpl::ProcessNextBuffer() {
   task_queue_.Post(task);
 #endif  // defined(ENABLE_TRACING) && !ION_PRODUCTION
 
-
   task_queue_.Execute();
 
   // Update room effects only if the pipeline is initialized.
@@ -493,7 +492,6 @@ template <typename OutputType>
 bool ResonanceAudioApiImpl::FillOutputBuffer(size_t num_channels,
                                              size_t num_frames,
                                              OutputType buffer_ptr) {
-
 
   if (buffer_ptr == nullptr) {
     LOG(WARNING) << kBadInputPointerMessage;

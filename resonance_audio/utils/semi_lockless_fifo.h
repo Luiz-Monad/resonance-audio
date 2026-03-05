@@ -221,8 +221,12 @@ void SemiLocklessFifo<DataType>::EnableBlockingSleepUntilMethods(bool enable) {
   // Taking the lock and dropping it immediately assure that the notify
   // cannot happen between the check of the predicate and wait of the
   // |pop_conditional_| and |push_conditional_|.
-  { std::lock_guard<std::mutex> lock(pop_conditional_mutex_); }
-  { std::lock_guard<std::mutex> lock(push_conditional_mutex_); }
+  {
+    std::lock_guard<std::mutex> lock(pop_conditional_mutex_);
+  }
+  {
+    std::lock_guard<std::mutex> lock(push_conditional_mutex_);
+  }
   pop_conditional_.notify_one();
   push_conditional_.notify_one();
 }

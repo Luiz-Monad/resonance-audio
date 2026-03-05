@@ -59,20 +59,16 @@ inline void ConvertSampleFromFloatFormat(float input, float* output) {
 }
 
 // Convert a vector of int16 samples to float format in the range [-1.0f, 1.0f].
-void ConvertPlanarSamples(size_t length, const int16* input,
-                                 float* output);
+void ConvertPlanarSamples(size_t length, const int16* input, float* output);
 
 // Overloaded input argument to support sample type templated methods.
-void ConvertPlanarSamples(size_t length, const float* input,
-                                 float* output);
+void ConvertPlanarSamples(size_t length, const float* input, float* output);
 
 // Overloaded method to support methods templated against the input sample type.
-void ConvertPlanarSamples(size_t length, const float* input,
-                                   int16* output);
+void ConvertPlanarSamples(size_t length, const float* input, int16* output);
 
 // Overloaded output argument to support sample type templated methods.
-void ConvertPlanarSamples(size_t length, const float* input,
-                                   float* output);
+void ConvertPlanarSamples(size_t length, const float* input, float* output);
 
 }  // namespace vraudio
 

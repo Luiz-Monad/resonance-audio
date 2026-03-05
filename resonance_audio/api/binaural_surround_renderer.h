@@ -29,7 +29,6 @@ namespace vraudio {
 // stereo.
 class BinauralSurroundRenderer {
  public:
-
   enum SurroundFormat {
     // Enables to initialize a yet undefined rendering mode.
     kInvalid = 0,
@@ -104,7 +103,6 @@ class BinauralSurroundRenderer {
 
     // Note: Next available value is: 11
   };
-
 
   virtual ~BinauralSurroundRenderer() {}
 

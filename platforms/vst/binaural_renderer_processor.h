@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-	http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS-IS" BASIS,
@@ -35,7 +35,8 @@ namespace Vst {
 // -----------------------------------------------------------------------------
 // Processor UID
 // -----------------------------------------------------------------------------
-static const FUID BinauralRendererProcessorUID(0xb9981ce8, 0xc7f1415d, 0x8bad4a8a, 0x6d1cb6e0);
+static const FUID BinauralRendererProcessorUID(0xb9981ce8, 0xc7f1415d,
+                                               0x8bad4a8a, 0x6d1cb6e0);
 
 //-----------------------------------------------------------------------------
 // BinauralRendererVst
@@ -43,59 +44,57 @@ static const FUID BinauralRendererProcessorUID(0xb9981ce8, 0xc7f1415d, 0x8bad4a8
 // This class implements the VST3 processor (audio engine) side of the plugin.
 //-----------------------------------------------------------------------------
 class BinauralRendererVst : public AudioEffect {
-public:
-	BinauralRendererVst();
-	~BinauralRendererVst() SMTG_OVERRIDE;
+ public:
+  BinauralRendererVst();
+  ~BinauralRendererVst() SMTG_OVERRIDE;
 
-	//--- AudioEffect overrides ---
-	tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
-	tresult PLUGIN_API terminate() SMTG_OVERRIDE;
+  //--- AudioEffect overrides ---
+  tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
+  tresult PLUGIN_API terminate() SMTG_OVERRIDE;
 
-	tresult PLUGIN_API setBusArrangements(SpeakerArrangement* inputs,
-		int32 numIns,
-		SpeakerArrangement* outputs,
-		int32 numOuts) SMTG_OVERRIDE;
-	tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize) SMTG_OVERRIDE;
-	tresult PLUGIN_API setActive(TBool state) SMTG_OVERRIDE;
+  tresult PLUGIN_API setBusArrangements(SpeakerArrangement* inputs,
+                                        int32 numIns,
+                                        SpeakerArrangement* outputs,
+                                        int32 numOuts) SMTG_OVERRIDE;
+  tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize)
+      SMTG_OVERRIDE;
+  tresult PLUGIN_API setActive(TBool state) SMTG_OVERRIDE;
 
-	tresult PLUGIN_API setupProcessing(ProcessSetup& setup) SMTG_OVERRIDE;
-	tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
+  tresult PLUGIN_API setupProcessing(ProcessSetup& setup) SMTG_OVERRIDE;
+  tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
 
-	tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
-	tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
 
-protected:
+ protected:
+  // Parameter handling.
+  void handleParameterChanges(IParameterChanges* changes);
 
-	// Parameter handling.
-	void handleParameterChanges(IParameterChanges* changes);
+  // Processing.
+  void processReplacing(int32 numInputs, float** inputs, int32 numOutputs,
+                        float** outputs, int32 sampleFrames, int32 sampleRate);
 
-	// Processing.
-	void processReplacing(int32 numInputs, float** inputs,
-		int32 numOutputs, float** outputs,
-		int32 sampleFrames, int32 sampleRate);
+  // Creates |BinauralSurroundRenderer| instances.
+  bool initBinauralSurroundRenderer(int32 framesPerBuffer,
+                                    int32 numInputChannels, int sampleRateHz);
 
-	// Creates |BinauralSurroundRenderer| instances.
-	bool initBinauralSurroundRenderer(int32 framesPerBuffer,
-		int32 numInputChannels,
-		int sampleRateHz);
+  // Plugin is active
+  bool active_;
 
-	// Plugin is active
-	bool active_;
+  // Buffer size |binauralSurroundRenderer_| has been initialized with.
+  int32 framesPerBuffer_;
 
-	// Buffer size |binauralSurroundRenderer_| has been initialized with.
-	int32 framesPerBuffer_;
+  // Buffer size |binauralSurroundRenderer_| has been initialized with.
+  int32 channels_;
 
-	// Buffer size |binauralSurroundRenderer_| has been initialized with.
-	int32 channels_;
+  // Sample rate |binauralSurroundRenderer_| has been initialized with.
+  int sampleRateHz_;
 
-	// Sample rate |binauralSurroundRenderer_| has been initialized with.
-	int sampleRateHz_;
-
-	// |BinauralSurroundRenderer| instance.
-	std::unique_ptr<vraudio::BinauralSurroundRenderer> binauralSurroundRenderer_;
+  // |BinauralSurroundRenderer| instance.
+  std::unique_ptr<vraudio::BinauralSurroundRenderer> binauralSurroundRenderer_;
 };
 
-}
-} // namespace Steinberg::Vst
+}  // namespace Vst
+}  // namespace Steinberg
 
 #endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_PROCESSOR_H_

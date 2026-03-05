@@ -50,4 +50,3 @@ TEST(AlignedAlocatorTest, TestAlignment) {
   TestAlignedAllocator<32>();
   TestAlignedAllocator<64>();
 }
-

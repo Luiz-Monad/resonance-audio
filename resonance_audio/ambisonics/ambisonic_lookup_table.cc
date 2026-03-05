@@ -22,7 +22,6 @@ limitations under the License.
 #include "base/constants_and_types.h"
 #include "base/misc_math.h"
 
-
 namespace vraudio {
 
 namespace {

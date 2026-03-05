@@ -99,7 +99,6 @@ void GenerateBandLimitedGaussianNoise(float center_frequency, int sampling_rate,
                                       unsigned seed,
                                       AudioBuffer* noise_buffer) {
 
-
   DCHECK(noise_buffer);
   DCHECK_GT(sampling_rate, 0);
   DCHECK_LT(center_frequency, static_cast<float>(sampling_rate) / 2.0f);

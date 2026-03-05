@@ -128,8 +128,8 @@ TEST_F(ReflectionKernelTest, MultipleReflectionsTest) {
   // path tracer.
   const size_t num_reflections = 5;
   const float t_between_intersections = 2.0f;
-  const float distance_between_intersections = t_between_intersections *
-      Vector3f(incident_ray_.direction()).norm();
+  const float distance_between_intersections =
+      t_between_intersections * Vector3f(incident_ray_.direction()).norm();
 
   AcousticRay ray = incident_ray_;
   float expected_prior_distance = 0.0f;

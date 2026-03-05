@@ -23,7 +23,6 @@ limitations under the License.
 #include "base/logging.h"
 #include "base/simd_macros.h"
 
-
 namespace vraudio {
 
 std::unique_ptr<MultiChannelIir> MultiChannelIir::Create(
