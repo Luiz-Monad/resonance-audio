@@ -10,15 +10,16 @@ ColumnLimit: 80
 DerivePointerAlignment: false
 PointerAlignment: Left
 
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
 
-IndentCaseLabels: false
-IndentPPDirectives: AfterHash
+IndentCaseLabels: true
+IndentPPDirectives: None
 
 IncludeBlocks: Preserve
 
 SortIncludes: false
 
+KeepEmptyLinesAtTheStartOfBlocks: true
 NamespaceIndentation: None
