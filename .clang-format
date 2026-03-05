@@ -1,0 +1,24 @@
+# Clang-format configuration for resonance-audio
+# Based on .clang-tidy settings
+
+Language: Cpp
+BasedOnStyle: Google
+
+IndentWidth: 2
+ColumnLimit: 80
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+IndentCaseLabels: false
+IndentPPDirectives: AfterHash
+
+IncludeBlocks: Preserve
+
+SortIncludes: false
+
+NamespaceIndentation: None
