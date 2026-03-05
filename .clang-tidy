@@ -1,0 +1,78 @@
+# Clang-tidy configuration for resonance-audio
+# Applies to resonance_audio/ and platforms/, excludes third_party/
+
+# Only check files in resonance_audio/ and platforms/vst/
+HeaderFilterRegex: 'resonance_audio/.*|platforms/vst/.*'
+
+Checks: >
+  -*,
+
+  bugprone-*,
+  misc-*,
+  performance-*,
+  readability-*,
+  clang-analyzer-*,
+  -clang-analyzer-security.FloatLoopCounter,
+
+  -readability-braces-around-statements,
+  -readability-convert-member-functions-to-static,
+  -readability-else-after-return,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-length,
+  -readability-implicit-bool-conversion,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+  -readability-make-member-function-const,
+  -readability-math-missing-parentheses,
+  -readability-named-parameter,
+  -readability-non-const-parameter,
+  -readability-qualified-auto,
+  -readability-simplify-boolean-expr,
+  -readability-static-accessed-through-instance,
+  -readability-static-definition-in-anonymous-namespace,
+  -readability-uppercase-literal-suffix,
+  -readability-use-std-min-max,
+
+  -bugprone-reserved-identifier,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+
+  -misc-include-cleaner,
+  -misc-non-private-member-variables-in-classes,
+  -misc-use-anonymous-namespace,
+  -misc-use-internal-linkage,
+
+  -modernize-*,
+  -llvmlibc-*,
+
+  -bugprone-narrowing-conversions,
+  -misc-const-correctness,
+  -misc-unused-parameters,
+  -readability-container-data-pointer,
+  -readability-inconsistent-declaration-parameter-name,
+# THE ABOVE SHOULD BE ENABLED AND FIXED
+
+CheckOptions:
+  # 2-space indentation (matching codebase style)
+  - key: IndentationWidth
+    value: '2'
+  - key: ColumnLimit
+    value: '80'
+
+  # Allow members with trailing underscore (num_channels_)
+  - key: readability-identifier-naming.ClassMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ClassMemberPrefix
+    value: ''
+
+  # Allow ALL_CAPS for constants
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstexprVariablePrefix
+    value: 'k'
+
+  # Allow Google-style includes
+  - key: google-readability-namespace-comments.Enabled
+    value: 'false'
+
+WarningsAsErrors: ''
