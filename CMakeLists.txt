@@ -71,6 +71,7 @@ if (BUILD_RESONANCE_AUDIO_TESTS OR BUILD_GEOMETRICAL_ACOUSTICS_TESTS)
     add_library(gtest OBJECT "${GTEST_DIR}/googlemock/src/gmock-all.cc"
             "${GTEST_DIR}/googletest/src/gtest-all.cc"
             "${GTEST_DIR}/googletest/src/gtest_main.cc")
+    target_include_directories(gtest PUBLIC "${GTEST_DIR}")
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googlemock/")
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googlemock/include")
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googletest/")
@@ -99,9 +100,6 @@ add_definitions(-DEIGEN_MPL2_ONLY)
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${EIGEN3_INCLUDE_DIR})
-
-add_subdirectory(resonance_audio)
-add_subdirectory(platforms)
 
 # ----------------------------------------------------------------------
 # Import Steinberg VST3 SDK
@@ -132,3 +130,7 @@ if (BUILD_VST_MONITOR_PLUGIN)
     add_subdirectory(${VST3_SDK_PATH})
 
 endif (BUILD_VST_MONITOR_PLUGIN)
+
+# ----------------------------------------------------------------------
+add_subdirectory(resonance_audio)
+add_subdirectory(platforms)
