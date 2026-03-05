@@ -1,0 +1,76 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Resonance: Run Clang-Tidy (Check)",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-noprofile",
+                "-noninteractive",
+                "-file",
+                ".vscode/run-clang-tidy.ps1",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Resonance: Run Clang-Tidy (Fix)",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-noprofile",
+                "-noninteractive",
+                "-file",
+                ".vscode/run-clang-tidy.ps1",
+                "-fix"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Resonance: Run Clang-Format (Check)",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-noprofile",
+                "-noninteractive",
+                "-file",
+                ".vscode/run-clang-format.ps1",
+                "-checkonly",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Resonance: Run Clang-Format (Fix)",
+            "type": "process",
+            "command": "pwsh",
+            "args": [
+                "-noprofile",
+                "-noninteractive",
+                "-file",
+                ".vscode/run-clang-format.ps1",
+                "-fix",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+    ]
+}

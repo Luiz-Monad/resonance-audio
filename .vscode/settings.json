@@ -1,0 +1,12 @@
+{
+    "C_Cpp.default.compilerPath": "C:/Program Files/LLVM/bin/clang++.exe",
+    "C_Cpp.default.cppStandard": "c++17",
+    "[cpp]": {
+        "editor.rulers": [
+            {
+                "column": 80,
+                "color": "#3cff00"
+            }
+        ]
+    }
+}
