@@ -69,8 +69,33 @@ protected:
 	// Parameter handling.
 	void handleParameterChanges(IParameterChanges* changes);
 
+	// Processing.
+	void processReplacing(int32 numInputs, float** inputs,
+		int32 numOutputs, float** outputs,
+		int32 sampleFrames, int32 sampleRate);
+
+	// Creates |BinauralSurroundRenderer| instances.
+	bool initBinauralSurroundRenderer(int32 framesPerBuffer,
+		int32 numInputChannels,
+		int sampleRateHz);
+
+	// Plugin is active
+	bool active_;
+
+	// Buffer size |binauralSurroundRenderer_| has been initialized with.
+	int32 framesPerBuffer_;
+
+	// Buffer size |binauralSurroundRenderer_| has been initialized with.
+	int32 channels_;
+
+	// Sample rate |binauralSurroundRenderer_| has been initialized with.
+	int sampleRateHz_;
+
+	// |BinauralSurroundRenderer| instance.
+	std::unique_ptr<vraudio::BinauralSurroundRenderer> binauralSurroundRenderer_;
 };
 
-}} // namespace Steinberg::Vst
+}
+} // namespace Steinberg::Vst
 
 #endif  // RESONANCE_AUDIO_PLATFORM_VST3_BINAURAL_RENDERER_PROCESSOR_H_
